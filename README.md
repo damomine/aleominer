@@ -42,7 +42,7 @@ Private key: APrivateKey1zkp95v192bRWbotxuUi7owk7uG31Tdim5qD6nFphcUmNHUA
 
 Then start miner like:
 ```shell
-    ./damominer --address <your address> --pool <solo prover proxy> [OPTIONS] 
+    ./damominer --address <your address> --proxy <solo prover proxy> [OPTIONS] 
 ```
 
 ```shell
