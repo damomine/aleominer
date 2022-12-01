@@ -55,4 +55,4 @@ NVIDIA Ampere GPU
 ## Changelog
 
 ### 1.1.0
-support for aleo testnet3 phase2.   
+support for aleo testnet3 phase2. 
