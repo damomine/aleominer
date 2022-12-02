@@ -56,8 +56,8 @@ Options:
 
 ## GPU supports
 
-NVIDIA Turing GPU
-NVIDIA Ampere GPU
+- NVIDIA Turing GPU
+- NVIDIA Ampere GPU
 
 ## Changelog
 
