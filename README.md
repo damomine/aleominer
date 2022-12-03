@@ -16,7 +16,7 @@ GPU optimization Miner for Aleo
 
 ## Disclaimer
 
-[damominer.hk](https://www.damominer.hk/) & [damominer_github](https://github.com/damominer) are the only 2 officially maintained site for publishing information and new releases of damominer.
+[damominer.hk](https://www.damominer.hk/) & [damominer_github](https://github.com/damomine) are the only 2 officially maintained site for publishing information and new releases of damominer.
 
 
 
@@ -24,6 +24,11 @@ GPU optimization Miner for Aleo
 
 Please refer to the usage help (`./damominer --help`):
 
+First:
+
+```shell 
+    chmod +x damominer
+```
 
 If you didn't have an aleo account, use the following command to create one:
 
