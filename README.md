@@ -68,3 +68,28 @@ NVIDIA Ampere GPU
 
 ### 1.1.0
 support for aleo testnet3 phase2.   
+
+### 1.2.0
+merge code.
+
+### 1.3.0
+fix some issue.
+
+### 1.4.0
+fix some issue.
+
+### 1.5.2
+increase connect stabel.
+
+### 1.6.1
+support V100,A100
+increase stalbel
+
+### 2.0.0
+increase performance
+
+### 2.1.2
+support 40-series cards
+enhance cuda performance
+decrease CPU load
+fix some issue (log crash, etc)  
