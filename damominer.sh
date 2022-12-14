@@ -177,7 +177,7 @@ download_damominer() {
     done
     bash -c "mv -f damominer ${DAMOMINER_FILE}"
     [[ ! -f ${DAMOMINER_FILE} ]] && echo -e "${Error} Damominer 主程序安装失败!" && exit 1
-    chmod +x ${DAMOMINER_FILE}
+    chmod 755 ${DAMOMINER_FILE}
     echo -e "${INFO} Damominer 主程序安装完成 (${Blue}${DAMOMINER_FILE}${Font})"
 }
 
