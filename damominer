@@ -1,0 +1,156 @@
+#!/usr/bin/env bash
+# Start/stop the Damominer.
+#
+### BEGIN INIT INFO
+# Provides:          Damominer
+# Required-Start:    $all
+# Required-Stop:     $all
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Starts the Damominer
+# Description:       Damominer is a GPU optimization miner for Aleo.
+### END INIT INFO
+
+PATH=/bin:/usr/bin:/sbin:/usr/sbin
+NAME=damominer
+SCRIPTNAME=/etc/init.d/"$NAME"
+DAMOMINER_DIR="/root/.damominer"
+DAMOMINER_CONF_FILE="${DAMOMINER_DIR}/damominer.conf"
+DAMOMINER_LOG_FILE="${DAMOMINER_DIR}/aleo.log"
+DAMOMINER_FILE="${DAMOMINER_DIR}/damominer"
+RETVAL=0
+
+Yellow="\033[33m"
+Green="\033[32m"
+Red="\033[31m"
+Blue="\033[36m"
+Font="\033[0m"
+
+INFO="[${Green}Info${Font}]"
+ERROR="[${Red}Error${Font}]"
+TIP="[${Green}Tip${Font}]"
+
+test -x $DAMOMINER_FILE || (echo -e "${Error} Damominer 程序不存在!" && exit 0)
+
+check_running() {
+	PID=$(ps -ef | grep "damominer" | grep -v "grep" | grep -v "damominer.sh" | grep -v "init.d" | awk '{print $2}')
+	if [[ ! -z ${PID} ]]; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+read_config() {
+	if [[ ! -e ${DAMOMINER_CONF_FILE} ]]; then
+       echo -e "${Error} Damominer 配置文件不存在!" && exit 1
+    else
+        ADDRESS=$(cat ${DAMOMINER_CONF_FILE} | grep "^address=" | awk -F "=" '{print $NF}')
+        PROXY=$(cat ${DAMOMINER_CONF_FILE} | grep "^proxy=" | awk -F "=" '{print $NF}')
+        WORKER=$(cat ${DAMOMINER_CONF_FILE} | grep "^worker=" | awk -F "=" '{print $NF}')
+        GPU=$(cat ${DAMOMINER_CONF_FILE} | grep "^gpu=" | awk -F "=" '{print $NF}')
+    fi
+}
+
+view_config() {
+	read_config
+	echo -e "\n ${Red}————————————— Damominer 配置信息 —————————————${Font} 
+ Aleo 地址\t: ${Yellow}${ADDRESS}${Font}
+ 代理地址\t: ${Yellow}${PROXY}${Font}
+ 设备名称\t: ${Yellow}${WORKER}${Font}
+ 运行显卡\t: ${Yellow}${GPU}${Font}"
+}
+
+do_start() {
+	check_running
+	if [[ $? -eq 0 ]]; then
+		echo -e "${INFO} Damoiner (PID ${PID}) 正在运行..." && exit 0
+	else
+		echo -e "${INFO} Damoiner 启动中..."
+		read_config
+
+		ARGUMENTS="--address ${ADDRESS} --proxy ${PROXY}"
+
+		if [[ ! -z ${WORKER} ]]; then
+			ARGUMENTS="${ARGUMENTS} --worker ${WORKER}"
+		fi
+
+		if [[ ! -z ${GPU} ]]; then
+			IFS=',' GPULIST=($GPU)
+			for GPUINDEX in "${GPULIST[@]}"; 
+			do
+				ARGUMENTS="${ARGUMENTS} --gpu ${GPUINDEX}"
+			done
+		fi
+		echo -e "${DAMOMINER_FILE} ${ARGUMENTS}"
+		bash -c "nohup ${DAMOMINER_FILE} ${ARGUMENTS}" >>"${DAMOMINER_LOG_FILE}" 2>&1 &
+		sleep 2s
+		check_running
+		if [[ $? -eq 0 ]]; then
+			view_config
+			echo -e "${INFO} Damoiner 启动成功!"
+		else
+			echo -e "${Error} Damoiner 启动失败!"
+		fi
+	fi
+}
+
+do_stop() {
+	check_running
+	if [[ $? -eq 0 ]]; then
+		kill -9 ${PID}
+		RETVAL=$?
+		if [[ $RETVAL -eq 0 ]]; then
+			echo -e "${INFO} Damoiner 停止成功!"
+		else
+			echo -e "${Error} Damoiner 停止失败!"
+		fi
+	else
+		echo -e "${INFO} Damoiner 未运行"
+		RETVAL=1
+	fi
+}
+
+do_restart() {
+	do_stop
+	sleep 2
+	do_start
+}
+
+do_status() {
+	check_running
+	if [[ $? -eq 0 ]]; then
+		view_config
+		echo -e "${INFO} Damoiner (PID $(echo ${PID})) 正在运行..."
+	else
+		echo -e "${INFO} Damoiner 未运行!"
+		RETVAL=1
+	fi
+}
+
+do_log() {
+	tail -f ${DAMOMINER_LOG_FILE}
+}
+
+case "$1" in
+start)
+    do_start
+    ;;
+stop)
+    do_stop
+    ;;
+restart)
+    do_restart
+    ;;
+status)
+    do_status
+    ;;
+log)
+	do_log
+	;;
+*)
+    echo "使用方法: /etc/init.d/damominer { start | stop | restart | status | log }"
+    RETVAL=1
+    ;;
+esac
+exit $RETVAL
