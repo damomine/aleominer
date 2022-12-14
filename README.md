@@ -19,21 +19,24 @@ GPU optimization Miner for Aleo
 [damominer.hk](https://www.damominer.hk/) & [damominer_github](https://github.com/damomine) are the only 2 officially maintained site for publishing information and new releases of damominer.
 
 
+## Install
+
+Running command below under `root` user:
+```shell
+wget https://raw.githubusercontent.com/damomine/aleominer/main/damominer.sh && chmod +x damominer.sh
+./damominer.sh
+```
+
+The miner will be installed to `/root/.damominer/damominer`.
 
 ## Usage
 
 Please refer to the usage help (`./damominer --help`):
 
-First:
-
-```shell 
-    chmod +x damominer
-```
-
 If you didn't have an aleo account, use the following command to create one:
 
 ```shell 
-    ./damominer --new-account
+./damominer --new-account
 ```
 
 **Please remember to save the account private key and view key.** 
@@ -47,7 +50,7 @@ Private key: APrivateKey1zkp95v192bRWbotxuUi7owk7uG31Tdim5qD6nFphcUmNHUA
 
 Then start miner like:
 ```shell
-    ./damominer --address <your address> --proxy <solo prover proxy> [OPTIONS] 
+./damominer --address <your address> --proxy <solo prover proxy> [OPTIONS] 
 ```
 
 ```shell
