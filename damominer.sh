@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # 变量
-SHELL_VERSION="0.9.9"
+SHELL_VERSION="0.9.10"
 DAMOMINER_DIR="${HOME}/.damominer"
 DAMOMINER_CONF_FILE="${DAMOMINER_DIR}/damominer.conf"
 DAMOMINER_LOG_FILE="${DAMOMINER_DIR}/aleo.log"
@@ -265,9 +265,9 @@ update_damominer() {
 
 install_service() {
     echo -e "${INFO} 安装 Damominer 启动脚本..."
-    wget -N -t2 -T3 "https://raw.githubusercontent.com/damomine/aleominer/master/damominer" -O /etc/init.d/damominer ||
-        wget -N -t2 -T3 "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer" -O /etc/init.d/damominer ||
-        wget -N -t2 -T3 "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer" -O /etc/init.d/damominer
+    wget -N -t2 -T3 "https://raw.githubusercontent.com/damomine/aleominer/master/service" -O /etc/init.d/damominer ||
+        wget -N -t2 -T3 "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/service" -O /etc/init.d/damominer ||
+        wget -N -t2 -T3 "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/service" -O /etc/init.d/damominer
     [[ ! -s /etc/init.d/damominer ]] && {
         echo -e "${ERROR} Damominer 启动脚本下载失败!"
         [[ -f /etc/init.d/damominer ]] && rm /etc/init.d/damominer
