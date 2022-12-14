@@ -55,8 +55,8 @@ update_shell() {
     echo -e "${INFO} 管理脚本当前版本为 [ ${SHELL_VERSION} ], 开始检测最新版本..."
     SHELL_NEW_VERSION=$(
         {
-            wget -t2 -T3 -qO- "https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" ||
             wget -t2 -T3 -qO- "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" ||
+            wget -t2 -T3 -qO- "https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" ||
             wget -t2 -T3 -qO- "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh"
         } | grep 'SHELL_VERSION="' | awk -F "=" '{print $NF}' | sed 's/\"//g' | head -1
     )
@@ -74,8 +74,8 @@ update_shell() {
                 restart_damominer
             fi
 
-			wget -N -t2 -T3 "https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh ||
-            wget -N -t2 -T3 "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh ||
+			wget -N -t2 -T3 "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh ||
+            wget -N -t2 -T3 "https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh ||
             wget -N -t2 -T3 "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh
 
             chmod +x damominer.sh
