@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 # 变量
-SHELL_VERSION="0.9.10"
+LANGUAGE=$1
+SHELL_VERSION="0.9.11"
 DAMOMINER_DIR="${HOME}/.damominer"
 DAMOMINER_CONF_FILE="${DAMOMINER_DIR}/damominer.conf"
 DAMOMINER_LOG_FILE="${DAMOMINER_DIR}/aleo.log"
@@ -53,13 +54,24 @@ check_ubuntu() {
 
 update_shell() {
     echo -e "${INFO} 管理脚本当前版本为 [ ${SHELL_VERSION} ], 开始检测最新版本..."
-    SHELL_NEW_VERSION=$(
-        {
-            wget -t2 -T3 -qO- "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" ||
-            wget -t2 -T3 -qO- "https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" ||
-            wget -t2 -T3 -qO- "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh"
-        } | grep 'SHELL_VERSION="' | awk -F "=" '{print $NF}' | sed 's/\"//g' | head -1
-    )
+
+    if [ "$LANGUAGE" == "cn" ]; then
+        SHELL_NEW_VERSION=$(
+            {
+                wget -t2 -T3 -qO- "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" ||
+                wget -t2 -T3 -qO- "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" ||
+                wget -t2 -T3 -qO- "https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh"
+            } | grep 'SHELL_VERSION="' | awk -F "=" '{print $NF}' | sed 's/\"//g' | head -1
+        )
+    else
+        SHELL_NEW_VERSION=$(
+            {
+                wget -t2 -T3 -qO- "https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" ||
+                wget -t2 -T3 -qO- "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" ||
+                wget -t2 -T3 -qO- "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh"
+            } | grep 'SHELL_VERSION="' | awk -F "=" '{print $NF}' | sed 's/\"//g' | head -1
+        )
+    fi
 
     [[ -z ${SHELL_NEW_VERSION} ]] && echo -e "${ERROR} 无法连接到 Github, 检测最新版本失败!" && exit 0
 
@@ -74,15 +86,21 @@ update_shell() {
                 restart_damominer
             fi
 
-			wget -N -t2 -T3 "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh ||
-            wget -N -t2 -T3 "https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh ||
-            wget -N -t2 -T3 "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh
+            if [ "$LANGUAGE" == "cn" ]; then
+                wget -N -t2 -T3 "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh ||
+                wget -N -t2 -T3 "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh ||
+                wget -N -t2 -T3 "https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh
+            else
+                wget -N -t2 -T3 "https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh ||
+                wget -N -t2 -T3 "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh ||
+                wget -N -t2 -T3 "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh
+            fi
 
             chmod +x damominer.sh
 
             echo -e "${INFO} 管理脚本已更新为最新版本[ ${SHELL_NEW_VERSION} ]!" && exit 0
 		else
-			echo && echo "${INFO} 已取消..." && echo
+			echo && echo -e "${INFO} 已取消..." && echo
 		fi
 	else
 		echo -e "${INFO} 当前已是最新版本[ ${SHELL_NEW_VERSION} ]!"
@@ -135,13 +153,24 @@ check_new_version() {
         echo -e "${INFO} 开始检测 Damominer 最新版本..."
     fi
     
-    DAMOMINER_NEW_VERSION=$(
-        {
-            wget -t2 -T3 -qO- "https://api.github.com/repos/damomine/aleominer/releases/latest" ||
-            wget -t2 -T3 -qO- "https://proxy.jeongen.com/https://api.github.com/repos/damomine/aleominer/releases/latest" ||
-            wget -t2 -T3 -qO- "https://gh-api.p3terx.com/repos/damomine/aleominer/releases/latest"
-        } | grep -o '"tag_name": ".*"' | head -n 1 | cut -d'"' -f4
-    )
+    if [ "$LANGUAGE" == "cn" ]; then
+        DAMOMINER_NEW_VERSION=$(
+            {
+                wget -t2 -T3 -qO- "https://proxy.jeongen.com/https://api.github.com/repos/damomine/aleominer/releases/latest" ||
+                wget -t2 -T3 -qO- "https://gh-api.p3terx.com/repos/damomine/aleominer/releases/latest" ||
+                wget -t2 -T3 -qO- "https://api.github.com/repos/damomine/aleominer/releases/latest"
+            } | grep -o '"tag_name": ".*"' | head -n 1 | cut -d'"' -f4
+        )
+    else
+        DAMOMINER_NEW_VERSION=$(
+            {
+                wget -t2 -T3 -qO- "https://api.github.com/repos/damomine/aleominer/releases/latest" ||
+                wget -t2 -T3 -qO- "https://proxy.jeongen.com/https://api.github.com/repos/damomine/aleominer/releases/latest" ||
+                wget -t2 -T3 -qO- "https://gh-api.p3terx.com/repos/damomine/aleominer/releases/latest"
+            } | grep -o '"tag_name": ".*"' | head -n 1 | cut -d'"' -f4
+        )
+    fi
+    
     if [[ -z ${DAMOMINER_NEW_VERSION} ]]; then
         echo -e "${ERROR} Damominer 最新版本获取失败, 请手动获取最新版本号[ https://github.com/damomine/aleominer/releases ]"
         read -e -p "请输入版本号:" DAMOMINER_NEW_VERSION
@@ -159,10 +188,16 @@ download_damominer() {
 
     DOWNLOAD_URL="https://github.com/damomine/aleominer/releases/download/${DAMOMINER_NEW_VERSION}/damominer_linux_${DAMOMINER_NEW_VERSION}.tar"
     
-    wget -N -t2 -T3 "https://ghproxy.com/${DOWNLOAD_URL}" -O damominer_linux_${DAMOMINER_NEW_VERSION}.tar ||
+    if [ "$LANGUAGE" == "cn" ]; then
+        wget -N -t2 -T3 "https://ghproxy.com/${DOWNLOAD_URL}" -O damominer_linux_${DAMOMINER_NEW_VERSION}.tar ||
+        wget -N -t2 -T3 "https://proxy.jeongen.com/${DOWNLOAD_URL}" -O damominer_linux_${DAMOMINER_NEW_VERSION}.tar ||
+        wget -N -t2 -T3 "${DOWNLOAD_URL}" -O damominer_linux_${DAMOMINER_NEW_VERSION}.tar
+    else
         wget -N -t2 -T3 "${DOWNLOAD_URL}" -O damominer_linux_${DAMOMINER_NEW_VERSION}.tar ||
+        wget -N -t2 -T3 "https://ghproxy.com/${DOWNLOAD_URL}" -O damominer_linux_${DAMOMINER_NEW_VERSION}.tar ||
         wget -N -t2 -T3 "https://proxy.jeongen.com/${DOWNLOAD_URL}" -O damominer_linux_${DAMOMINER_NEW_VERSION}.tar
-
+    fi
+    
     [[ ! -s "damominer_linux_${DAMOMINER_NEW_VERSION}.tar" ]] && echo -e "${Error} Damominer 下载失败!" && exit 1
     echo -e "${INFO} 下载 Damominer 版本 ${DAMOMINER_NEW_VERSION}成功!"
     tar -xvf damominer_linux_${DAMOMINER_NEW_VERSION}.tar || (echo -e "${ERROR} 解压 damominer_linux_${DAMOMINER_NEW_VERSION}.tar 失败!" && rm damominer_linux_${DAMOMINER_NEW_VERSION}.tar && exit 1)
@@ -265,9 +300,17 @@ update_damominer() {
 
 install_service() {
     echo -e "${INFO} 安装 Damominer 启动脚本..."
-    wget -N -t2 -T3 "https://raw.githubusercontent.com/damomine/aleominer/master/service" -O /etc/init.d/damominer ||
+
+    if [ "$LANGUAGE" == "cn" ]; then
+        wget -N -t2 -T3 "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/service" -O /etc/init.d/damominer ||
+        wget -N -t2 -T3 "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/service" -O /etc/init.d/damominer ||
+        wget -N -t2 -T3 "https://raw.githubusercontent.com/damomine/aleominer/master/service" -O /etc/init.d/damominer
+    else
+        wget -N -t2 -T3 "https://raw.githubusercontent.com/damomine/aleominer/master/service" -O /etc/init.d/damominer ||
         wget -N -t2 -T3 "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/service" -O /etc/init.d/damominer ||
         wget -N -t2 -T3 "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/service" -O /etc/init.d/damominer
+    fi
+    
     [[ ! -s /etc/init.d/damominer ]] && {
         echo -e "${ERROR} Damominer 启动脚本下载失败!"
         [[ -f /etc/init.d/damominer ]] && rm /etc/init.d/damominer
