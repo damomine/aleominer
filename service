@@ -14,7 +14,7 @@
 PATH=/bin:/usr/bin:/sbin:/usr/sbin
 NAME=damominer
 SCRIPTNAME=/etc/init.d/"$NAME"
-DAMOMINER_DIR="/root/.damominer"
+DAMOMINER_DIR="${HOME}/.damominer"
 DAMOMINER_CONF_FILE="${DAMOMINER_DIR}/damominer.conf"
 DAMOMINER_LOG_FILE="${DAMOMINER_DIR}/aleo.log"
 DAMOMINER_FILE="${DAMOMINER_DIR}/damominer"
@@ -30,7 +30,7 @@ INFO="[${Green}Info${Font}]"
 ERROR="[${Red}Error${Font}]"
 TIP="[${Green}Tip${Font}]"
 
-test -x $DAMOMINER_FILE || (echo -e "${Error} Damominer 程序不存在!" && exit 0)
+test -x $DAMOMINER_FILE || (echo -e "${Error} Damominer program does not exist!" && exit 0)
 
 check_running() {
 	PID=$(ps -ef | grep "damominer" | grep -v "grep" | grep -v "damominer.sh" | grep -v "init.d" | awk '{print $2}')
@@ -43,7 +43,7 @@ check_running() {
 
 read_config() {
 	if [[ ! -e ${DAMOMINER_CONF_FILE} ]]; then
-       echo -e "${Error} Damominer 配置文件不存在!" && exit 1
+       echo -e "${Error} Damominer config file does not exist!" && exit 1
     else
         ADDRESS=$(cat ${DAMOMINER_CONF_FILE} | grep "^address=" | awk -F "=" '{print $NF}')
         PROXY=$(cat ${DAMOMINER_CONF_FILE} | grep "^proxy=" | awk -F "=" '{print $NF}')
@@ -54,19 +54,19 @@ read_config() {
 
 view_config() {
 	read_config
-	echo -e "\n ${Red}————————————— Damominer 配置信息 —————————————${Font} 
- Aleo 地址\t: ${Yellow}${ADDRESS}${Font}
- 代理地址\t: ${Yellow}${PROXY}${Font}
- 设备名称\t: ${Yellow}${WORKER}${Font}
- 运行显卡\t: ${Yellow}${GPU}${Font}"
+	echo -e "\n ${Red}—————————————— Damominer configuration information ———————————————${Font}
+ Aleo address\t: ${Yellow}${ADDRESS}${Font}
+ Proxy address\t: ${Yellow}${PROXY}${Font}
+ Device name\t: ${Yellow}${WORKER}${Font}
+ Running GPUs\t: ${Yellow}${GPU}${Font}"
 }
 
 do_start() {
 	check_running
 	if [[ $? -eq 0 ]]; then
-		echo -e "${INFO} Damoiner (PID ${PID}) 正在运行..." && exit 0
+		echo -e "${INFO} Damoiner (PID ${PID}) is running..." && exit 0
 	else
-		echo -e "${INFO} Damoiner 启动中..."
+		echo -e "${INFO} Damoiner Starting..."
 		read_config
 
 		ARGUMENTS="--address ${ADDRESS} --proxy ${PROXY}"
@@ -88,9 +88,9 @@ do_start() {
 		check_running
 		if [[ $? -eq 0 ]]; then
 			view_config
-			echo -e "${INFO} Damoiner 启动成功!"
+			echo -e "${INFO} Damoiner started successfully!"
 		else
-			echo -e "${Error} Damoiner 启动失败!"
+			echo -e "${Error} Damoiner failed to start!"
 		fi
 	fi
 }
@@ -101,12 +101,12 @@ do_stop() {
 		kill -9 ${PID}
 		RETVAL=$?
 		if [[ $RETVAL -eq 0 ]]; then
-			echo -e "${INFO} Damoiner 停止成功!"
+			echo -e "${INFO} Damoiner stopped successfully!"
 		else
-			echo -e "${Error} Damoiner 停止失败!"
+			echo -e "${Error} Damoiner stop failed!"
 		fi
 	else
-		echo -e "${INFO} Damoiner 未运行"
+		echo -e "${INFO} Damoiner is not running!"
 		RETVAL=1
 	fi
 }
@@ -121,9 +121,9 @@ do_status() {
 	check_running
 	if [[ $? -eq 0 ]]; then
 		view_config
-		echo -e "${INFO} Damoiner (PID $(echo ${PID})) 正在运行..."
+		echo -e "${INFO} Damoiner (PID $(echo ${PID})) is running..."
 	else
-		echo -e "${INFO} Damoiner 未运行!"
+		echo -e "${INFO} Damoiner is not running!"
 		RETVAL=1
 	fi
 }
@@ -149,7 +149,7 @@ log)
 	do_log
 	;;
 *)
-    echo "使用方法: /etc/init.d/damominer { start | stop | restart | status | log }"
+    echo "Usage: /etc/init.d/damominer { start | stop | restart | status | log }"
     RETVAL=1
     ;;
 esac
