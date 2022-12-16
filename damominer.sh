@@ -2,8 +2,8 @@
 
 # 变量
 LANGUAGE=$1
-SHELL_VERSION="0.9.12"
-DAMOMINER_DIR="${HOME}/.damominer"
+SHELL_VERSION="0.9.13"
+DAMOMINER_DIR="/.damominer"
 DAMOMINER_CONF_FILE="${DAMOMINER_DIR}/damominer.conf"
 DAMOMINER_LOG_FILE="${DAMOMINER_DIR}/aleo.log"
 DAMOMINER_FILE="${DAMOMINER_DIR}/damominer"
@@ -97,18 +97,16 @@ update_shell() {
     if [[ ${SHELL_NEW_VERSION} != ${SHELL_VERSION} ]]; then
         if [ "$LANGUAGE" == "cn" ]; then
             echo -e "发现新版本[ ${SHELL_NEW_VERSION} ], 是否更新？[Y/n]"
-		    read -p "(默认: y):" yn
+            read -p "(默认: y):" yn
         else
             echo -e "New version found [ ${SHELL_NEW_VERSION} ], update? [Y/n]"
             read -p "(default: y):" yn
         fi
-		
-		[[ -z "${yn}" ]] && yn="y"
-		if [[ ${yn} == [Yy] ]]; then
+        
+        [[ -z "${yn}" ]] && yn="y"
+        if [[ ${yn} == [Yy] ]]; then
             if [[ -e "/etc/init.d/damominer" ]]; then
                 uninstall_service
-                install_damominer
-                restart_damominer
             fi
 
             if [ "$LANGUAGE" == "cn" ]; then
@@ -127,20 +125,20 @@ update_shell() {
             else
                 echo -e "${INFO} The script has been updated to the latest version [ ${SHELL_NEW_VERSION} ]!" && exit 0
             fi
-		else
+        else
             if [ "$LANGUAGE" == "cn" ]; then
                 echo && echo -e "${INFO} 已取消..." && echo
             else
                 echo && echo -e "${INFO} Cancelled..." && echo
             fi
-		fi
-	else
+        fi
+    else
         if [ "$LANGUAGE" == "cn" ]; then
             echo -e "${INFO} 当前已是最新版本[ ${SHELL_NEW_VERSION} ]!"
         else
             echo -e "${INFO} is currently the latest version [ ${SHELL_NEW_VERSION} ]!"
         fi
-	fi
+    fi
 }
 
 check_damominer_file() {
@@ -173,16 +171,16 @@ check_installed_status() {
 }
 
 check_pid() {
-    PID=$(ps -ef | grep "damominer" | grep -v grep | grep -v "damominer.sh" | grep -v "init.d" | awk '{print $2}')
+    PID=$(ps -ef | grep "damominer" | grep -v grep | grep -v "damominer.sh" | grep -v "init.d" | grep -v "defunct" | awk '{print $2}')
 }
 
 check_running() {
-	check_pid
-	if [[ ! -z ${PID} ]]; then
-		return 0
-	else
-		return 1
-	fi
+    check_pid
+    if [[ ! -z ${PID} ]]; then
+        return 0
+    else
+        return 1
+    fi
 }
 
 check_version() {
@@ -640,7 +638,7 @@ read_config() {
 
 view_config() {
     read_config
-	clear
+    clear
     if [ "$LANGUAGE" == "cn" ]; then
         echo -e "\n ${Red}————————————— Damominer 配置信息 —————————————${Font} 
  Aleo 地址\t: ${Yellow}${ADDRESS}${Font}
@@ -702,7 +700,7 @@ new_account() {
             
             check_running
             # if [[ ${CONFIGURE_ONLY} != "1" ]]; then
-	        if [[ $? -eq 0 ]]; then
+            if [[ $? -eq 0 ]]; then
                 restart_damominer
             fi
         else
@@ -848,7 +846,7 @@ configure_address() {
             
             check_running
             # if [[ ${CONFIGURE_ONLY} != "1" ]]; then
-	        if [[ $? -eq 0 ]]; then
+            if [[ $? -eq 0 ]]; then
                 restart_damominer
             fi
         else
@@ -969,7 +967,7 @@ configure_proxy() {
             
             check_running
             # if [[ ${CONFIGURE_ONLY} != "1" ]]; then
-	        if [[ $? -eq 0 ]]; then
+            if [[ $? -eq 0 ]]; then
                 restart_damominer
             fi
         else
@@ -1116,7 +1114,7 @@ configure_worker() {
             
             check_running
             # if [[ ${CONFIGURE_ONLY} != "1" ]]; then
-	        if [[ $? -eq 0 ]]; then
+            if [[ $? -eq 0 ]]; then
                 restart_damominer
             fi
         else
@@ -1185,7 +1183,7 @@ configure_gpu() {
             
             check_running
             # if [[ ${CONFIGURE_ONLY} != "1" ]]; then
-	        if [[ $? -eq 0 ]]; then
+            if [[ $? -eq 0 ]]; then
                 restart_damominer
             fi
         else

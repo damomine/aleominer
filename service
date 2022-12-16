@@ -33,7 +33,7 @@ TIP="[${Green}Tip${Font}]"
 test -x $DAMOMINER_FILE || (echo -e "${Error} Damominer program does not exist!" && exit 0)
 
 check_running() {
-	PID=$(ps -ef | grep "damominer" | grep -v "grep" | grep -v "damominer.sh" | grep -v "init.d" | awk '{print $2}')
+	PID=$(ps -ef | grep "damominer" | grep -v "grep" | grep -v "damominer.sh" | grep -v "init.d"| grep -v "defunct" | awk '{print $2}')
 	if [[ ! -z ${PID} ]]; then
 		return 0
 	else

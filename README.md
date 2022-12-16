@@ -27,7 +27,7 @@ wget https://raw.githubusercontent.com/damomine/aleominer/main/damominer.sh && c
 ./damominer.sh
 ```
 
-The miner will be installed to `/$HOME/.damominer/damominer`.
+The miner will be installed to `/.damominer/damominer`.
 
 ## Usage
 
