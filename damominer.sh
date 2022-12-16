@@ -8,7 +8,11 @@ DAMOMINER_CONF_FILE="${DAMOMINER_DIR}/damominer.conf"
 DAMOMINER_LOG_FILE="${DAMOMINER_DIR}/aleo.log"
 DAMOMINER_FILE="${DAMOMINER_DIR}/damominer"
 DAMOMINER_PROXIES=("aleo1.damominer.hk:9090" "aleo2.damominer.hk:9090" "aleo3.damominer.hk:9090" "asiahk.damominer.hk:9090")
-NVIDIA_DOWNLOAD_BASE_URL="https://us.download.nvidia.com/XFree86/Linux-x86_64"
+if [ "$LANGUAGE" == "cn" ]; then
+    NVIDIA_DOWNLOAD_BASE_URL="https://cn.download.nvidia.com/XFree86/Linux-x86_64"
+else
+    NVIDIA_DOWNLOAD_BASE_URL="https://us.download.nvidia.com/XFree86/Linux-x86_64"
+fi
 
 # 字体颜色配置
 Yellow="\033[33m"
