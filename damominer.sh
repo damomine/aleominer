@@ -2,12 +2,12 @@
 
 # 变量
 LANGUAGE=$1
-SHELL_VERSION="0.9.13"
+SHELL_VERSION="0.9.14"
 DAMOMINER_DIR="/.damominer"
 DAMOMINER_CONF_FILE="${DAMOMINER_DIR}/damominer.conf"
 DAMOMINER_LOG_FILE="${DAMOMINER_DIR}/aleo.log"
 DAMOMINER_FILE="${DAMOMINER_DIR}/damominer"
-DAMOMINER_PROXIES=( "aleo1.damominer.hk:9090" "aleo2.damominer.hk:9090" "aleo3.damominer.hk:9090" "asiahk.damominer.hk:9090" )
+DAMOMINER_PROXIES=("aleo1.damominer.hk:9090" "aleo2.damominer.hk:9090" "aleo3.damominer.hk:9090" "asiahk.damominer.hk:9090")
 NVIDIA_DOWNLOAD_BASE_URL="https://us.download.nvidia.com/XFree86/Linux-x86_64"
 
 # 字体颜色配置
@@ -22,19 +22,19 @@ INFO="[${Green}Info${Font}]"
 ERROR="[${Red}Error${Font}]"
 TIP="[${Green}Tip${Font}]"
 
-yellow(){
+yellow() {
     echo -e "${Yellow} $1 ${Font}"
 }
 
-green(){
+green() {
     echo -e "${Green} $1 ${Font}"
 }
 
-red(){
+red() {
     echo -e "${Red} $1 ${Font}"
 }
 
-blue(){
+blue() {
     echo -e "${Blue} $1 ${Font}"
 }
 
@@ -49,16 +49,16 @@ check_root() {
 }
 
 check_ubuntu() {
-    OS=$(cat /etc/lsb-release | grep -oP '(?<=DISTRIB_ID=)[^ ]*')
+    OS=$(grep -oP '(?<=DISTRIB_ID=)[^ ]*' /etc/lsb-release)
 
     # fail on non-zero return value
-    if [ ! $OS = "Ubuntu" ]; then
+    if [ ! "$OS" = "Ubuntu" ]; then
         if [ "$LANGUAGE" == "cn" ]; then
             echo -e "${ERROR} 管理脚本只支持 ubuntu 系统"
         else
             echo -e "${ERROR} The script only supports ubuntu system"
         fi
-        
+
         exit 1
     fi
 }
@@ -74,16 +74,16 @@ update_shell() {
         SHELL_NEW_VERSION=$(
             {
                 wget --timeout=5 -t2 -qO- "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" ||
-                wget --timeout=5 -t2 -qO- "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" ||
-                wget --timeout=5 -t2 -qO- "https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh"
+                    wget --timeout=5 -t2 -qO- "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" ||
+                    wget --timeout=5 -t2 -qO- "https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh"
             } | grep 'SHELL_VERSION="' | awk -F "=" '{print $NF}' | sed 's/\"//g' | head -1
         )
     else
         SHELL_NEW_VERSION=$(
             {
                 wget --timeout=5 -t2 -qO- "https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" ||
-                wget --timeout=5 -t2 -qO- "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" ||
-                wget --timeout=5 -t2 -qO- "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh"
+                    wget --timeout=5 -t2 -qO- "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" ||
+                    wget --timeout=5 -t2 -qO- "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh"
             } | grep 'SHELL_VERSION="' | awk -F "=" '{print $NF}' | sed 's/\"//g' | head -1
         )
     fi
@@ -93,16 +93,16 @@ update_shell() {
     else
         [[ -z ${SHELL_NEW_VERSION} ]] && echo -e "${ERROR} Unable to connect to Github, checking latest version failed!" && exit 0
     fi
-    
-    if [[ ${SHELL_NEW_VERSION} != ${SHELL_VERSION} ]]; then
+
+    if [[ ${SHELL_NEW_VERSION} != "${SHELL_VERSION}" ]]; then
         if [ "$LANGUAGE" == "cn" ]; then
             echo -e "发现新版本[ ${SHELL_NEW_VERSION} ], 是否更新？[Y/n]"
-            read -p "(默认: y):" yn
+            read -rp "(默认: y):" yn
         else
             echo -e "New version found [ ${SHELL_NEW_VERSION} ], update? [Y/n]"
-            read -p "(default: y):" yn
+            read -rp "(default: y):" yn
         fi
-        
+
         [[ -z "${yn}" ]] && yn="y"
         if [[ ${yn} == [Yy] ]]; then
             if [[ -e "/etc/init.d/damominer" ]]; then
@@ -111,12 +111,12 @@ update_shell() {
 
             if [ "$LANGUAGE" == "cn" ]; then
                 wget --timeout=5 -N -t2 "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh ||
-                wget --timeout=5 -N -t2 "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh ||
-                wget --timeout=5 -N -t2 "https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh
+                    wget --timeout=5 -N -t2 "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh ||
+                    wget --timeout=5 -N -t2 "https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh
             else
                 wget --timeout=5 -N -t2 "https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh ||
-                wget --timeout=5 -N -t2 "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh ||
-                wget --timeout=5 -N -t2 "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh
+                    wget --timeout=5 -N -t2 "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh ||
+                    wget --timeout=5 -N -t2 "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh
             fi
 
             chmod +x damominer.sh
@@ -142,25 +142,25 @@ update_shell() {
 }
 
 check_damominer_file() {
-    if [ ! -f ${DAMOMINER_FILE} ];then
+    if [ ! -f ${DAMOMINER_FILE} ]; then
         if [ "$LANGUAGE" == "cn" ]; then
             echo -e "${ERROR} Damominer 没有安装, 请检查!"
         else
             echo -e "${ERROR} Damominer is not installed, please check!"
         fi
-        
+
         exit 1
     fi
 }
 
 check_damominer_conf_file() {
-    if [ ! -f ${DAMOMINER_CONF_FILE} ];then
+    if [ ! -f ${DAMOMINER_CONF_FILE} ]; then
         if [ "$LANGUAGE" == "cn" ]; then
             echo -e "${ERROR} Damominer 配置文件不存在, 请检查!"
         else
             echo -e "${ERROR} Damominer configuration file does not exist, please check!"
         fi
-        
+
         exit 1
     fi
 }
@@ -171,12 +171,12 @@ check_installed_status() {
 }
 
 check_pid() {
-    PID=$(ps -ef | grep "damominer" | grep -v grep | grep -v "damominer.sh" | grep -v "init.d" | grep -v "defunct" | awk '{print $2}')
+    PID=$(ps -ef | pgrep "damominer")
 }
 
 check_running() {
     check_pid
-    if [[ ! -z ${PID} ]]; then
+    if [[ -n ${PID} ]]; then
         return 0
     else
         return 1
@@ -184,20 +184,20 @@ check_running() {
 }
 
 check_version() {
-    if [ -f ${DAMOMINER_FILE} ];then
+    if [ -f ${DAMOMINER_FILE} ]; then
         DAMOMINER_VERSION=$(${DAMOMINER_FILE} -V | awk '{print $2}')
     fi
 }
 
 check_new_version() {
     check_version
-    if [[ ! -z ${DAMOMINER_VERSION} ]];then
+    if [[ -n ${DAMOMINER_VERSION} ]]; then
         if [ "$LANGUAGE" == "cn" ]; then
             echo -e "${INFO} Damominer 当前版本为 [ v${DAMOMINER_VERSION} ], 开始检测最新版本..."
         else
             echo -e "The current version of ${INFO} Damominer is [ v${DAMOMINER_VERSION} ], starting to check the latest version..."
         fi
-        
+
     else
         if [ "$LANGUAGE" == "cn" ]; then
             echo -e "${INFO} 开始检测 Damominer 最新版本..."
@@ -205,33 +205,33 @@ check_new_version() {
             echo -e "${INFO} Start checking the latest version of Damominer..."
         fi
     fi
-    
+
     if [ "$LANGUAGE" == "cn" ]; then
         DAMOMINER_NEW_VERSION=$(
             {
                 wget --timeout=5 -t2 -qO- "https://proxy.jeongen.com/https://api.github.com/repos/damomine/aleominer/releases/latest" ||
-                wget --timeout=5 -t2 -qO- "https://gh-api.p3terx.com/repos/damomine/aleominer/releases/latest" ||
-                wget --timeout=5 -t2 -qO- "https://api.github.com/repos/damomine/aleominer/releases/latest"
+                    wget --timeout=5 -t2 -qO- "https://gh-api.p3terx.com/repos/damomine/aleominer/releases/latest" ||
+                    wget --timeout=5 -t2 -qO- "https://api.github.com/repos/damomine/aleominer/releases/latest"
             } | grep -o '"tag_name": ".*"' | head -n 1 | cut -d'"' -f4
         )
     else
         DAMOMINER_NEW_VERSION=$(
             {
                 wget --timeout=5 -t2 -qO- "https://api.github.com/repos/damomine/aleominer/releases/latest" ||
-                wget --timeout=5 -t2 -qO- "https://proxy.jeongen.com/https://api.github.com/repos/damomine/aleominer/releases/latest" ||
-                wget --timeout=5 -t2 -qO- "https://gh-api.p3terx.com/repos/damomine/aleominer/releases/latest"
+                    wget --timeout=5 -t2 -qO- "https://proxy.jeongen.com/https://api.github.com/repos/damomine/aleominer/releases/latest" ||
+                    wget --timeout=5 -t2 -qO- "https://gh-api.p3terx.com/repos/damomine/aleominer/releases/latest"
             } | grep -o '"tag_name": ".*"' | head -n 1 | cut -d'"' -f4
         )
     fi
-    
+
     if [[ -z ${DAMOMINER_NEW_VERSION} ]]; then
         if [ "$LANGUAGE" == "cn" ]; then
             echo -e "${ERROR} Damominer 最新版本获取失败, 请手动获取最新版本号[ https://github.com/damomine/aleominer/releases ]"
-            read -e -p "请输入版本号:" DAMOMINER_NEW_VERSION
+            read -rep "请输入版本号:" DAMOMINER_NEW_VERSION
             [[ -z "${DAMOMINER_NEW_VERSION}" ]] && echo "${INFO} 取消..." && exit 1
         else
             echo -e "${ERROR} Failed to obtain the latest version of Damominer, please manually obtain the latest version number[ https://github.com/damomine/aleominer/releases ]"
-            read -e -p "Please enter the version number:" DAMOMINER_NEW_VERSION
+            read -rep "Please enter the version number:" DAMOMINER_NEW_VERSION
             [[ -z "${DAMOMINER_NEW_VERSION}" ]] && echo "${INFO} cancel..." && exit 1
         fi
     fi
@@ -243,7 +243,7 @@ check_new_version() {
 }
 
 download_damominer() {
-    if [ -z ${DAMOMINER_NEW_VERSION} ];then
+    if [ -z "${DAMOMINER_NEW_VERSION}" ]; then
         if [ "$LANGUAGE" == "cn" ]; then
             echo -e "${ERROR} Damominer 版本获取失败, 中断下载"
         else
@@ -257,22 +257,22 @@ download_damominer() {
     fi
 
     DOWNLOAD_URL="https://github.com/damomine/aleominer/releases/download/${DAMOMINER_NEW_VERSION}/damominer_linux_${DAMOMINER_NEW_VERSION}.tar"
-    
+
     if [ "$LANGUAGE" == "cn" ]; then
-        wget --timeout=15 -N "https://proxy.jeongen.com/${DOWNLOAD_URL}" -O damominer_linux_${DAMOMINER_NEW_VERSION}.tar ||
-        wget --timeout=15 -N "https://ghproxy.com/${DOWNLOAD_URL}" -O damominer_linux_${DAMOMINER_NEW_VERSION}.tar ||
-        wget --timeout=15 -N "${DOWNLOAD_URL}" -O damominer_linux_${DAMOMINER_NEW_VERSION}.tar
+        wget --timeout=15 -N "https://proxy.jeongen.com/${DOWNLOAD_URL}" -O damominer_linux_"${DAMOMINER_NEW_VERSION}".tar ||
+            wget --timeout=15 -N "https://ghproxy.com/${DOWNLOAD_URL}" -O damominer_linux_"${DAMOMINER_NEW_VERSION}".tar ||
+            wget --timeout=15 -N "${DOWNLOAD_URL}" -O damominer_linux_"${DAMOMINER_NEW_VERSION}".tar
     else
-        wget --timeout=15 -N "${DOWNLOAD_URL}" -O damominer_linux_${DAMOMINER_NEW_VERSION}.tar ||
-        wget --timeout=15 -N "https://ghproxy.com/${DOWNLOAD_URL}" -O damominer_linux_${DAMOMINER_NEW_VERSION}.tar ||
-        wget --timeout=15 -N "https://proxy.jeongen.com/${DOWNLOAD_URL}" -O damominer_linux_${DAMOMINER_NEW_VERSION}.tar
+        wget --timeout=15 -N "${DOWNLOAD_URL}" -O damominer_linux_"${DAMOMINER_NEW_VERSION}".tar ||
+            wget --timeout=15 -N "https://ghproxy.com/${DOWNLOAD_URL}" -O damominer_linux_"${DAMOMINER_NEW_VERSION}".tar ||
+            wget --timeout=15 -N "https://proxy.jeongen.com/${DOWNLOAD_URL}" -O damominer_linux_"${DAMOMINER_NEW_VERSION}".tar
     fi
-    
+
     [[ ! -s "damominer_linux_${DAMOMINER_NEW_VERSION}.tar" ]] && {
         if [ "$LANGUAGE" == "cn" ]; then
-            echo -e "${Error} Damominer 下载失败!" 
+            echo -e "${ERROR} Damominer 下载失败!"
         else
-            echo -e "${INFO} Download Damominer failed!"
+            echo -e "${ERROR} Download Damominer failed!"
         fi
     } && exit 1
 
@@ -282,23 +282,23 @@ download_damominer() {
         echo -e "${INFO} Download Damominer version ${DAMOMINER_NEW_VERSION} successfully!"
     fi
 
-    tar -xvf damominer_linux_${DAMOMINER_NEW_VERSION}.tar || (rm damominer_linux_${DAMOMINER_NEW_VERSION}.tar && {
+    tar -xvf damominer_linux_"${DAMOMINER_NEW_VERSION}".tar || (rm damominer_linux_"${DAMOMINER_NEW_VERSION}".tar && {
         if [ "$LANGUAGE" == "cn" ]; then
             echo -e "${ERROR} 解压 damominer_linux_${DAMOMINER_NEW_VERSION}.tar 失败!"
         else
             echo -e "${ERROR} Unpacking damominer_linux_${DAMOMINER_NEW_VERSION}.tar failed!"
         fi
     } && exit 1)
-    
+
     [[ ! -s "damominer" ]] && {
         if [ "$LANGUAGE" == "cn" ]; then
-            echo -e "${Error} Damominer 主程序不存在!" 
+            echo -e "${ERROR} Damominer 主程序不存在!"
         else
-            echo -e "${INFO} Damominer binaries does not exist!"
+            echo -e "${ERROR} Damominer binaries does not exist!"
         fi
     } && exit 1
 
-    if [ ! -d "${DAMOMINER_DIR}" ];then
+    if [ ! -d "${DAMOMINER_DIR}" ]; then
         bash -c "mkdir ${DAMOMINER_DIR}"
     fi
 
@@ -308,17 +308,17 @@ download_damominer() {
         else
             echo -e "${INFO} Remove old Damominer binaries..."
         fi
-        
+
         rm -vf "${DAMOMINER_FILE}"
     done
     bash -c "mv -f damominer ${DAMOMINER_FILE}"
     [[ ! -f ${DAMOMINER_FILE} ]] && {
         if [ "$LANGUAGE" == "cn" ]; then
-            echo -e "${Error} Damominer 主程序安装失败!" 
+            echo -e "${ERROR} Damominer 主程序安装失败!"
         else
-            echo -e "${INFO} Install Damominer binaries failed..."
+            echo -e "${ERROR} Install Damominer binaries failed..."
         fi
-        
+
     } && exit 1
 
     chmod 755 ${DAMOMINER_FILE}
@@ -332,10 +332,10 @@ download_damominer() {
 
 install_damominer() {
     check_root
-    
+
     [[ -f ${DAMOMINER_FILE} ]] && {
         if [ "$LANGUAGE" == "cn" ]; then
-            echo -e "${ERROR} Damominer 已安装, 请检查!" 
+            echo -e "${ERROR} Damominer 已安装, 请检查!"
         else
             echo -e "${ERROR} Damominer is already installed, please check!"
         fi
@@ -346,30 +346,30 @@ install_damominer() {
     else
         echo -e "${INFO} Checking dependencies..."
     fi
-    
+
     repair_openssl
     add_dns
     if [ "$LANGUAGE" == "cn" ]; then
         echo -e "是否要安装 NVIDIA 显卡驱动? [Y/n]"
-        read -p "(默认: y):" INSTALL_NVIDIA
+        read -rp "(默认: y):" INSTALL_NVIDIA
     else
         echo -e "Do you want to install NVIDIA graphics driver? [Y/n]"
-        read -p "(default: y):" INSTALL_NVIDIA
+        read -rp "(default: y):" INSTALL_NVIDIA
     fi
-    
+
     INSTALL_NVIDIA="${INSTALL_NVIDIA:=Y}"
 
     if [[ $INSTALL_NVIDIA = "Y" ]] || [[ $INSTALL_NVIDIA = "y" ]]; then
         install_nvidia
     fi
-    
+
     do_install_damominer
     if [ "$LANGUAGE" == "cn" ]; then
         echo -e "${INFO} 开始启动 Damominer..."
     else
         echo -e "${INFO} Starting Damominer..."
     fi
-    
+
     start_damominer
 }
 
@@ -379,7 +379,7 @@ do_install_damominer() {
     else
         echo -e "${INFO} Starts installing Damominer..."
     fi
-    
+
     check_new_version
     download_damominer
     generate_config
@@ -395,12 +395,12 @@ uninstall_damominer() {
     check_root
     if [ "$LANGUAGE" == "cn" ]; then
         echo -e "确定要卸载 Damominer? [Y/n]:"
-        read -p "(默认: y):" UNINSTALL
+        read -rp "(默认: y):" UNINSTALL
     else
         echo -e "Are you sure you want to uninstall Damominer? [Y/n]:"
-        read -p "(default: y):" UNINSTALL
+        read -rp "(default: y):" UNINSTALL
     fi
-    
+
     UNINSTALL="${UNINSTALL:=Y}"
     if [[ $UNINSTALL = "Y" ]] || [[ $UNINSTALL = "y" ]]; then
         echo && do_uninstall_damominer && echo
@@ -419,7 +419,7 @@ do_uninstall_damominer() {
     else
         echo -e "${INFO} Starts uninstalling Damominer..."
     fi
-    
+
     [[ -s /etc/init.d/damominer ]] && /etc/init.d/damominer stop && {
         if [ "$LANGUAGE" == "cn" ]; then
             echo -e "${INFO} 停止运行 Damoiner 成功!"
@@ -430,7 +430,7 @@ do_uninstall_damominer() {
 
     check_pid
 
-    [[ ! -z $PID ]] && kill -9 ${PID} && {
+    [[ -n $PID ]] && kill -9 "${PID}" && {
         if [ "$LANGUAGE" == "cn" ]; then
             echo -e "${INFO} 关闭 Damoiner 进程成功!"
         else
@@ -482,12 +482,12 @@ update_damominer() {
 
     if [ "$LANGUAGE" == "cn" ]; then
         echo -e "确定要更新 Damominer 版本 [v${DAMOMINER_VERSION}] 到远程版本 [${DAMOMINER_NEW_VERSION}]? [Y/n]:"
-        read -p "(默认: y):" UPDATE
+        read -rp "(默认: y):" UPDATE
     else
         echo -e "Are you sure you want to update Damominer version [v${DAMOMINER_VERSION}] to remote version [${DAMOMINER_NEW_VERSION}]? [Y/n]:"
-        read -p "(default: y):" UPDATE
+        read -rp "(default: y):" UPDATE
     fi
-    
+
     UPDATE="${UPDATE:=Y}"
     if [[ $UPDATE = "Y" ]] || [[ $UPDATE = "y" ]]; then
 
@@ -501,7 +501,7 @@ update_damominer() {
             echo -e "${INFO} Damominer updated!"
             echo -e "${INFO} starting Damominer..."
         fi
-        
+
         start_damominer
     else
         if [ "$LANGUAGE" == "cn" ]; then
@@ -521,21 +521,21 @@ install_service() {
 
     if [ "$LANGUAGE" == "cn" ]; then
         wget --timeout=5 -N -t2 "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/service" -O /etc/init.d/damominer ||
-        wget --timeout=5 -N -t2 "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/service" -O /etc/init.d/damominer ||
-        wget --timeout=5 -N -t2 "https://raw.githubusercontent.com/damomine/aleominer/master/service" -O /etc/init.d/damominer
+            wget --timeout=5 -N -t2 "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/service" -O /etc/init.d/damominer ||
+            wget --timeout=5 -N -t2 "https://raw.githubusercontent.com/damomine/aleominer/master/service" -O /etc/init.d/damominer
     else
         wget --timeout=5 -N -t2 "https://raw.githubusercontent.com/damomine/aleominer/master/service" -O /etc/init.d/damominer ||
-        wget --timeout=5 -N -t2 "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/service" -O /etc/init.d/damominer ||
-        wget --timeout=5 -N -t2 "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/service" -O /etc/init.d/damominer
+            wget --timeout=5 -N -t2 "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/service" -O /etc/init.d/damominer ||
+            wget --timeout=5 -N -t2 "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/service" -O /etc/init.d/damominer
     fi
-    
+
     [[ ! -s /etc/init.d/damominer ]] && {
         if [ "$LANGUAGE" == "cn" ]; then
             echo -e "${ERROR} Damominer 启动脚本下载失败!"
         else
             echo -e "${ERROR} Damominer startup script download failed!"
         fi
-        
+
         [[ -f /etc/init.d/damominer ]] && rm /etc/init.d/damominer
         exit 1
     }
@@ -554,7 +554,7 @@ uninstall_service() {
     else
         echo -e "${INFO} Starts uninstalling Damominer startup script..."
     fi
-    
+
     update-rc.d -f damominer remove
     rm -rf "/etc/init.d/damominer"
 
@@ -571,14 +571,14 @@ generate_config() {
     else
         echo -e "${INFO} Starts initializing configuration file..."
     fi
-    
+
     if [[ ! -e ${DAMOMINER_CONF_FILE} ]]; then
         if [ "$LANGUAGE" == "cn" ]; then
             echo -e "# 指定 Aleo 地址
 # 注意：使用你自己的地址作为挖矿地址
 address=aleo1mf6km7m04mj2s86t5xwe6gmhaav3eucaxfmrpemg0edajqntnsxqx85qjp
 
-# 指定 Damominer 代理地址 
+# 指定 Damominer 代理地址
 # 注意：选择连接状况最优的代理地址, 延时掉线率高会导致爆块低
 proxy=aleo3.damominer.hk:9090
 
@@ -588,7 +588,7 @@ proxy=aleo3.damominer.hk:9090
 
 # 指定运行的显卡, 多个值之间使用逗号(,)分隔, 例如 0,1,2
 # 注意: 如果没有指定将使用所有卡
-# gpu=" > ${DAMOMINER_CONF_FILE}
+# gpu=" >${DAMOMINER_CONF_FILE}
             echo -e "${INFO} Damominer 配置文件创建成功 (${Blue}${DAMOMINER_CONF_FILE}${Font})!"
         else
             echo -e "# specify Aleo address
@@ -605,10 +605,10 @@ proxy=aleo3.damominer.hk:9090
 
 # Specify the running graphics card, use commas (,) to separate multiple values, such as 0,1,2
 # Note: if not specified all cards will be used
-# gpu=" > ${DAMOMINER_CONF_FILE}
+# gpu=" >${DAMOMINER_CONF_FILE}
             echo -e "${INFO} Damominer configuration file successfully created (${Blue}${DAMOMINER_CONF_FILE}${Font})!"
         fi
-        
+
         configure_address
         configure_proxy_with_fastest
     else
@@ -623,16 +623,16 @@ proxy=aleo3.damominer.hk:9090
 read_config() {
     if [[ ! -e ${DAMOMINER_CONF_FILE} ]]; then
         if [ "$LANGUAGE" == "cn" ]; then
-            echo -e "${Error} Damominer 配置文件不存在!"
+            echo -e "${ERROR} Damominer 配置文件不存在!"
         else
-            echo -e "${Error} Damominer configuration file does not exist!"
+            echo -e "${ERROR} Damominer configuration file does not exist!"
         fi
         exit 1
     else
-        ADDRESS=$(cat ${DAMOMINER_CONF_FILE} | grep "^address=" | awk -F "=" '{print $NF}')
-        PROXY=$(cat ${DAMOMINER_CONF_FILE} | grep "^proxy=" | awk -F "=" '{print $NF}')
-        WORKER=$(cat ${DAMOMINER_CONF_FILE} | grep "^worker=" | awk -F "=" '{print $NF}')
-        GPU=$(cat ${DAMOMINER_CONF_FILE} | grep "^gpu=" | awk -F "=" '{print $NF}')
+        ADDRESS=$(awk -F= '/^address/{print $NF}' "${DAMOMINER_CONF_FILE}")
+        PROXY=$(awk -F= '/^proxy/{print $NF}' "${DAMOMINER_CONF_FILE}")
+        WORKER=$(awk -F= '/^worker/{print $NF}' "${DAMOMINER_CONF_FILE}")
+        GPU=$(awk -F= '/^gpu/{print $NF}' "${DAMOMINER_CONF_FILE}")
     fi
 }
 
@@ -640,7 +640,7 @@ view_config() {
     read_config
     clear
     if [ "$LANGUAGE" == "cn" ]; then
-        echo -e "\n ${Red}————————————— Damominer 配置信息 —————————————${Font} 
+        echo -e "\n ${Red}————————————— Damominer 配置信息 —————————————${Font}
  Aleo 地址\t: ${Yellow}${ADDRESS}${Font}
  代理地址\t: ${Yellow}${PROXY}${Font}
  设备名称\t: ${Yellow}${WORKER}${Font}
@@ -656,7 +656,7 @@ view_config() {
 
 new_account() {
     check_damominer_file
-    
+
     NEW_ACCOUNT_OUTPUT="$(${DAMOMINER_FILE} --new-account)"
 
     if [ "$LANGUAGE" == "cn" ]; then
@@ -667,7 +667,7 @@ new_account() {
         echo -e "${INFO} Aleo 钱包地址已经生成!"
         echo
         echo -e "是否要更新钱包地址到配置文件? [Y/n]"
-        read -p "(默认: y):" PURGE
+        read -rp "(默认: y):" PURGE
     else
         echo -e "\n ${Red}—————————————————— Please keep the following content safe ——————————————————————${Font}"
         echo -e "${NEW_ACCOUNT_OUTPUT}"
@@ -676,9 +676,9 @@ new_account() {
         echo -e "${INFO} Aleo wallet address has been generated!"
         echo
         echo -e "Do you want to update the wallet address to the configuration file? [Y/n]"
-        read -p "(default: y):" PURGE
+        read -rp "(default: y):" PURGE
     fi
-    
+
     PURGE="${PURGE:=Y}"
 
     if [[ $PURGE = "Y" ]] || [[ $PURGE = "y" ]]; then
@@ -686,9 +686,9 @@ new_account() {
         NEW_ADDRESS=$(echo "${NEW_ACCOUNT_OUTPUT}" | grep -v '#' | grep 'Address: ' | awk '{print $2}')
 
         sed -i 's/^#\s*address=/address=/g' ${DAMOMINER_CONF_FILE} && sleep 1 && read_config
-        sed -i 's/^address='${ADDRESS}'/address='${NEW_ADDRESS}'/g' ${DAMOMINER_CONF_FILE}
+        sed -i 's/^address='"${ADDRESS}"'/address='"${NEW_ADDRESS}"'/g' ${DAMOMINER_CONF_FILE}
 
-        if ! grep -wq "address=${NEW_ADDRESS}" ${DAMOMINER_CONF_FILE}; then 
+        if ! grep -wq "address=${NEW_ADDRESS}" ${DAMOMINER_CONF_FILE}; then
             echo -e "address=${NEW_ADDRESS}" >>${DAMOMINER_CONF_FILE}
         fi
         if [[ $? -eq 0 ]]; then
@@ -697,10 +697,9 @@ new_account() {
             else
                 echo -e "${INFO} Damominer wallet address modified successfully! The new wallet address is: ${Green}${NEW_ADDRESS}${Font}"
             fi
-            
-            check_running
+
             # if [[ ${CONFIGURE_ONLY} != "1" ]]; then
-            if [[ $? -eq 0 ]]; then
+            if check_running; then
                 restart_damominer
             fi
         else
@@ -717,11 +716,11 @@ start_damominer() {
     check_installed_status
     check_pid
     if [ "$LANGUAGE" == "cn" ]; then
-        [[ ! -z ${PID} ]] && echo -e "${ERROR} Damominer 正在运行, 请检查!" && exit 1
+        [[ -n ${PID} ]] && echo -e "${ERROR} Damominer 正在运行, 请检查!" && exit 1
     else
-        [[ ! -z ${PID} ]] && echo -e "${ERROR} Damominer is running, please check!" && exit 1
+        [[ -n ${PID} ]] && echo -e "${ERROR} Damominer is running, please check!" && exit 1
     fi
-    
+
     /etc/init.d/damominer start
     view_damominer_log
 }
@@ -734,7 +733,7 @@ stop_damominer() {
     else
         [[ -z ${PID} ]] && echo -e "${ERROR} Damominer is not running, please check!" && exit 1
     fi
-    
+
     /etc/init.d/damominer stop
 }
 
@@ -744,7 +743,7 @@ restart_damominer() {
     else
         echo -e "${INFO} Restart Damominer..."
     fi
-    
+
     check_installed_status
     /etc/init.d/damominer restart
     view_damominer_log
@@ -756,10 +755,10 @@ configure_address() {
     else
         echo -e "${INFO} Modify Damominer wallet address..."
     fi
-    
+
     check_damominer_conf_file
 
-    CONFIGURE_ONLY=$1
+    # CONFIGURE_ONLY=$1
     read_config
     if [[ -z "${ADDRESS}" ]]; then
         if [ "$LANGUAGE" == "cn" ]; then
@@ -776,65 +775,62 @@ configure_address() {
     fi
     if [ "$LANGUAGE" == "cn" ]; then
         PS3="请选择 Damominer 钱包地址设置方式:"
-        options=("手动输入" "生成新钱包" )
-        select opt in "${options[@]}"
-        do
+        options=("手动输入" "生成新钱包")
+        select opt in "${options[@]}"; do
             case $opt in
-                "手动输入")
-                    read -e -p " 请输入新的 Damominer 钱包地址: " NEW_ADDRESS
-                    echo
-                    break
-                    ;;
-                "生成新钱包")
-                    check_damominer_file
-                    NEW_ACCOUNT_OUTPUT="$(${DAMOMINER_FILE} --new-account)"
-                    echo -e "\n ${Red}——————————————————— 请自己保管好以下这段内容 ————————————————————${Font} "
-                    echo -e "${NEW_ACCOUNT_OUTPUT}"
-                    echo -e "\n ${Red}————— 本脚本没有保存, 丢失将无法领取奖励, 没有任何途径可以找回 —————${Font} "
-                    echo
-                    echo -e "${INFO} Aleo 钱包地址已经生成!"
+            "手动输入")
+                read -rep " 请输入新的 Damominer 钱包地址: " NEW_ADDRESS
+                echo
+                break
+                ;;
+            "生成新钱包")
+                check_damominer_file
+                NEW_ACCOUNT_OUTPUT="$(${DAMOMINER_FILE} --new-account)"
+                echo -e "\n ${Red}——————————————————— 请自己保管好以下这段内容 ————————————————————${Font} "
+                echo -e "${NEW_ACCOUNT_OUTPUT}"
+                echo -e "\n ${Red}————— 本脚本没有保存, 丢失将无法领取奖励, 没有任何途径可以找回 —————${Font} "
+                echo
+                echo -e "${INFO} Aleo 钱包地址已经生成!"
 
-                    NEW_ADDRESS=$(echo "${NEW_ACCOUNT_OUTPUT}" | grep -v '#' | grep 'Address: ' | awk '{print $2}')
-                    break
-                    ;;
-                *) echo "无效选项";;
+                NEW_ADDRESS=$(echo "${NEW_ACCOUNT_OUTPUT}" | grep -v '#' | grep 'Address: ' | awk '{print $2}')
+                break
+                ;;
+            *) echo "无效选项" ;;
             esac
         done
     else
         PS3="Please select the Damominer wallet address setting method:"
         options=("Manual input" "Generate new wallet")
-        select opt in "${options[@]}"
-        do
+        select opt in "${options[@]}"; do
             case $opt in
-                "Manual input")
-                    read -e -p " Please enter the new Damominer wallet address: " NEW_ADDRESS
-                    echo
-                    break
-                    ;;
-                "Generate new wallet")
-                    check_damominer_file
-                    NEW_ACCOUNT_OUTPUT="$(${DAMOMINER_FILE} --new-account)"
-                    echo -e "\n ${Red}—————————————————— Please keep the following content safe ——————————————————————${Font}"
-                    echo -e "${NEW_ACCOUNT_OUTPUT}"
-                    echo -e "\n ${Red}——— This script is not saved, if lost, you will not be able to claim rewards ———${Font} "
-                    echo
-                    echo -e "${INFO} Aleo wallet address has been generated!"
+            "Manual input")
+                read -rep " Please enter the new Damominer wallet address: " NEW_ADDRESS
+                echo
+                break
+                ;;
+            "Generate new wallet")
+                check_damominer_file
+                NEW_ACCOUNT_OUTPUT="$(${DAMOMINER_FILE} --new-account)"
+                echo -e "\n ${Red}—————————————————— Please keep the following content safe ——————————————————————${Font}"
+                echo -e "${NEW_ACCOUNT_OUTPUT}"
+                echo -e "\n ${Red}——— This script is not saved, if lost, you will not be able to claim rewards ———${Font} "
+                echo
+                echo -e "${INFO} Aleo wallet address has been generated!"
 
-                    NEW_ADDRESS=$(echo "${NEW_ACCOUNT_OUTPUT}" | grep -v '#' | grep 'Address: ' | awk '{print $2}')
-                    break
-                    ;;
-                *) echo "Invalid option";;
+                NEW_ADDRESS=$(echo "${NEW_ACCOUNT_OUTPUT}" | grep -v '#' | grep 'Address: ' | awk '{print $2}')
+                break
+                ;;
+            *) echo "Invalid option" ;;
             esac
         done
     fi
-    
 
     [[ -z "${NEW_ADDRESS}" ]] && NEW_ADDRESS=${ADDRESS}
     if [[ "${ADDRESS}" != "${NEW_ADDRESS}" ]]; then
         sed -i 's/^#\s*address=/address=/g' ${DAMOMINER_CONF_FILE} && sleep 1 && read_config
-        sed -i 's/^address='${ADDRESS}'/address='${NEW_ADDRESS}'/g' ${DAMOMINER_CONF_FILE}
+        sed -i 's/^address='"${ADDRESS}"'/address='"${NEW_ADDRESS}"'/g' ${DAMOMINER_CONF_FILE}
 
-        if ! grep -wq "address=${NEW_ADDRESS}" ${DAMOMINER_CONF_FILE}; then 
+        if ! grep -wq "address=${NEW_ADDRESS}" ${DAMOMINER_CONF_FILE}; then
             echo -e "address=${NEW_ADDRESS}" >>${DAMOMINER_CONF_FILE}
         fi
         if [[ $? -eq 0 ]]; then
@@ -843,10 +839,9 @@ configure_address() {
             else
                 echo -e "${INFO} Damominer wallet address modified successfully! The new wallet address is: ${Green}${NEW_ADDRESS}${Font}"
             fi
-            
-            check_running
+
             # if [[ ${CONFIGURE_ONLY} != "1" ]]; then
-            if [[ $? -eq 0 ]]; then
+            if check_running; then
                 restart_damominer
             fi
         else
@@ -871,10 +866,10 @@ configure_proxy() {
     else
         echo -e "${INFO} Modify Damominer proxy address..."
     fi
-    
+
     check_damominer_conf_file
 
-    CONFIGURE_ONLY=$1
+    # CONFIGURE_ONLY=$1
     read_config
     if [[ -z "${PROXY}" ]]; then
         if [ "$LANGUAGE" == "cn" ]; then
@@ -893,59 +888,55 @@ configure_proxy() {
     if [ "$LANGUAGE" == "cn" ]; then
         PS3="请选择 Damominer 代理地址设置方式:"
         options=("自动选择" "列表选择" "手动输入")
-        select opt in "${options[@]}"
-        do
+        select opt in "${options[@]}"; do
             case $opt in
-                "自动选择")
-                    get_fastest_proxy
-                    echo -e "${INFO} 自动选择最快代理 ${fast_proxy}"
-                    NEW_PROXY=${fast_proxy}
+            "自动选择")
+                get_fastest_proxy
+                echo -e "${INFO} 自动选择最快代理 ${fast_proxy}"
+                NEW_PROXY=${fast_proxy}
+                break
+                ;;
+            "列表选择")
+                PS3="请选择 Damominer 代理地址:"
+                select proxy in "${DAMOMINER_PROXIES[@]}"; do
+                    NEW_PROXY=${proxy}
                     break
-                    ;;
-                "列表选择")
-                    PS3="请选择 Damominer 代理地址:"
-                    select proxy in "${DAMOMINER_PROXIES[@]}"
-                    do
-                        NEW_PROXY=${proxy}
-                        break
-                    done
-                    break
-                    ;;
-                "手动输入")
-                    read -e -p " 请输入新的 Damominer 代理地址: " NEW_PROXY
-                    echo
-                    break
-                    ;;
-                *) echo "无效选项";;
+                done
+                break
+                ;;
+            "手动输入")
+                read -rep " 请输入新的 Damominer 代理地址: " NEW_PROXY
+                echo
+                break
+                ;;
+            *) echo "无效选项" ;;
             esac
         done
     else
         PS3="Please select the Damominer proxy address setting method:"
         options=("Automatic Selection" "List Selection" "Manual Input")
-        select opt in "${options[@]}"
-        do
+        select opt in "${options[@]}"; do
             case $opt in
-                "Automatic Selection")
-                    get_fastest_proxy
-                    echo -e "${INFO} automatically selects the fastest proxy ${fast_proxy}"
-                    NEW_PROXY=${fast_proxy}
+            "Automatic Selection")
+                get_fastest_proxy
+                echo -e "${INFO} automatically selects the fastest proxy ${fast_proxy}"
+                NEW_PROXY=${fast_proxy}
+                break
+                ;;
+            "List Selection")
+                PS3="Please select Damominer proxy address:"
+                select proxy in "${DAMOMINER_PROXIES[@]}"; do
+                    NEW_PROXY=${proxy}
                     break
-                    ;;
-                "List Selection")
-                    PS3="Please select Damominer proxy address:"
-                    select proxy in "${DAMOMINER_PROXIES[@]}"
-                    do
-                        NEW_PROXY=${proxy}
-                        break
-                    done
-                    break
-                    ;;
-                "Manual Input")
-                    read -e -p " Please enter the new Damominer proxy address: " NEW_PROXY
-                    echo
-                    break
-                    ;;
-                *) echo "Invalid option";;
+                done
+                break
+                ;;
+            "Manual Input")
+                read -rep " Please enter the new Damominer proxy address: " NEW_PROXY
+                echo
+                break
+                ;;
+            *) echo "Invalid option" ;;
             esac
         done
     fi
@@ -953,9 +944,9 @@ configure_proxy() {
     [[ -z "${NEW_PROXY}" ]] && NEW_PROXY=${PROXY}
     if [[ "${PROXY}" != "${NEW_PROXY}" ]]; then
         sed -i 's/^#\s*proxy=/proxy=/g' ${DAMOMINER_CONF_FILE} && sleep 1 && read_config
-        sed -i 's/^proxy='${PROXY}'/proxy='${NEW_PROXY}'/g' ${DAMOMINER_CONF_FILE}
+        sed -i 's/^proxy='"${PROXY}"'/proxy='"${NEW_PROXY}"'/g' ${DAMOMINER_CONF_FILE}
 
-        if ! grep -wq "proxy=${NEW_PROXY}" ${DAMOMINER_CONF_FILE}; then 
+        if ! grep -wq "proxy=${NEW_PROXY}" ${DAMOMINER_CONF_FILE}; then
             echo -e "proxy=${NEW_PROXY}" >>${DAMOMINER_CONF_FILE}
         fi
         if [[ $? -eq 0 ]]; then
@@ -964,10 +955,9 @@ configure_proxy() {
             else
                 echo -e "The proxy address of ${INFO} Damominer has been modified successfully! The new proxy address is: ${Green}${NEW_PROXY}${Font}"
             fi
-            
-            check_running
+
             # if [[ ${CONFIGURE_ONLY} != "1" ]]; then
-            if [[ $? -eq 0 ]]; then
+            if check_running; then
                 restart_damominer
             fi
         else
@@ -993,26 +983,25 @@ configure_proxy_with_fastest() {
     else
         echo -e "${INFO} Automatically set as fastest proxy: ${fast_proxy}"
     fi
-    
+
     NEW_PROXY=${fast_proxy}
 
     sed -i 's/^#\s*proxy=/proxy=/g' ${DAMOMINER_CONF_FILE} && sleep 1 && read_config
-    sed -i 's/^proxy='${PROXY}'/proxy='${NEW_PROXY}'/g' ${DAMOMINER_CONF_FILE}
+    sed -i 's/^proxy='"${PROXY}"'/proxy='"${NEW_PROXY}"'/g' ${DAMOMINER_CONF_FILE}
 
-    if ! grep -wq "proxy=${NEW_PROXY}" ${DAMOMINER_CONF_FILE}; then 
+    if ! grep -wq "proxy=${NEW_PROXY}" ${DAMOMINER_CONF_FILE}; then
         echo -e "proxy=${NEW_PROXY}" >>${DAMOMINER_CONF_FILE}
     fi
 
-     if [[ $? -eq 0 ]]; then
+    if [[ $? -eq 0 ]]; then
         if [ "$LANGUAGE" == "cn" ]; then
             echo -e "${INFO} Damominer 代理地址修改成功!"
         else
             echo -e "${INFO} Damominer proxy address modified successfully!"
         fi
-        
-        check_running
+
         # if [[ ${CONFIGURE_ONLY} != "1" ]]; then
-        if [[ $? -eq 0 ]]; then
+        if check_running; then
             restart_damominer
         fi
     else
@@ -1030,36 +1019,35 @@ get_fastest_proxy() {
     else
         echo -e "${INFO} test all proxies..."
     fi
-    
-    for proxy in "${DAMOMINER_PROXIES[@]}"
-    do
-        url=$(echo ${proxy} | cut -d ":" -f 1)
-        if ping -c 1 $url | grep -o "time=.*" >> /dev/null 2>&1; then 
-            time_str=$(ping -c 1 $url 2>/dev/null | grep -o "time=.*" | cut -d "=" -f 2 | awk '{printf $1}');
+
+    for proxy in "${DAMOMINER_PROXIES[@]}"; do
+        url=$(echo "${proxy}" | cut -d ":" -f 1)
+        if ping -c 1 "$url" | grep -o "time=.*" >>/dev/null 2>&1; then
+            time_str=$(ping -c 1 "$url" 2>/dev/null | grep -o "time=.*" | cut -d "=" -f 2 | awk '{printf $1}')
             ping_time=${time_str//[^0-9]/}
 
-            if [ ! $ping_time ]; then 
-                continue;
+            if [ ! "$ping_time" ]; then
+                continue
             fi
-        
-            case $ping_time in
-                ''|*[!0-9]*)
-                    # ping_time 不是有效的数字
-                    echo "$proxy : Error"
-                    ;;
-                *)
-                    if [ ! $fast_ping_time ]; then 
-                        fast_ping_time=$ping_time;
-                        fast_proxy=$proxy;
-                    fi
-                    echo "$proxy : $time_str ms"
 
-                    # If time is less than previous pings, store the url & time
-                    if [ "$ping_time" -lt "$fast_ping_time" ]; then
-                        fast_proxy=$proxy
-                        fast_ping_time=$ping_time
-                    fi
-                    ;;
+            case $ping_time in
+            '' | *[!0-9]*)
+                # ping_time 不是有效的数字
+                echo "$proxy : Error"
+                ;;
+            *)
+                if [ ! "$fast_ping_time" ]; then
+                    fast_ping_time=$ping_time
+                    fast_proxy=$proxy
+                fi
+                echo "$proxy : $time_str ms"
+
+                # If time is less than previous pings, store the url & time
+                if [ "$ping_time" -lt "$fast_ping_time" ]; then
+                    fast_proxy=$proxy
+                    fast_ping_time=$ping_time
+                fi
+                ;;
             esac
         fi
     done
@@ -1074,7 +1062,7 @@ configure_worker() {
 
     check_damominer_conf_file
 
-    CONFIGURE_ONLY=$1
+    # CONFIGURE_ONLY=$1
     read_config
 
     if [[ -z "${WORKER}" ]]; then
@@ -1091,17 +1079,17 @@ configure_worker() {
         fi
     fi
     if [ "$LANGUAGE" == "cn" ]; then
-        read -e -p " 请输入新的 Damominer 设备名称 (限字母与数字字符): " NEW_WORKER
+        read -rep " 请输入新的 Damominer 设备名称 (限字母与数字字符): " NEW_WORKER
     else
-        read -e -p " Please enter the new Damominer worker name (alphanumeric characters only): " NEW_WORKER
+        read -rep " Please enter the new Damominer worker name (alphanumeric characters only): " NEW_WORKER
     fi
-    
+
     echo
     if [[ "${WORKER}" != "${NEW_WORKER}" ]]; then
         sed -i 's/^#\s*worker=/worker=/g' ${DAMOMINER_CONF_FILE} && sleep 1 && read_config
-        sed -i 's/^worker='${WORKER}'/worker='${NEW_WORKER}'/g' ${DAMOMINER_CONF_FILE}
+        sed -i 's/^worker='"${WORKER}"'/worker='"${NEW_WORKER}"'/g' ${DAMOMINER_CONF_FILE}
 
-        if ! grep -wq "worker=${NEW_WORKER}" ${DAMOMINER_CONF_FILE}; then 
+        if ! grep -wq "worker=${NEW_WORKER}" ${DAMOMINER_CONF_FILE}; then
             echo -e "worker=${NEW_WORKER}" >>${DAMOMINER_CONF_FILE}
         fi
         if [[ $? -eq 0 ]]; then
@@ -1110,11 +1098,9 @@ configure_worker() {
             else
                 echo -e "${INFO} Damominer worker name modified successfully! The new worker name is: ${Green}${NEW_WORKER}${Font}"
             fi
-            
-            
-            check_running
+
             # if [[ ${CONFIGURE_ONLY} != "1" ]]; then
-            if [[ $? -eq 0 ]]; then
+            if check_running; then
                 restart_damominer
             fi
         else
@@ -1141,8 +1127,8 @@ configure_gpu() {
     fi
 
     check_damominer_conf_file
-    
-    CONFIGURE_ONLY=$1
+
+    # CONFIGURE_ONLY=$1
     read_config
 
     if [[ -z "${GPU}" ]]; then
@@ -1158,20 +1144,20 @@ configure_gpu() {
             echo -e "Current Damominer GPUs is: ${Green}${GPU}${Font}"
         fi
     fi
-    
+
     if [ "$LANGUAGE" == "cn" ]; then
-        read -e -p " 请输入新的 Damominer 运行显卡 (没有输入将使用所有显卡, 多张显卡使用逗号 "," 分隔, 例如 "0,1,2"): " NEW_GPU
+        read -rep ' 请输入新的 Damominer 运行显卡 (没有输入将使用所有显卡, 多张显卡使用逗号 "," 分隔, 例如 "0,1,2"): ' NEW_GPU
     else
-        read -e -p " Please enter the new GPUs for Damominer to run (no input will use all GPUs, multiple GPUs are separated by commas ",", such as "0,1,2"): " NEW_GPU
+        read -rep ' Please enter the new GPUs for Damominer to run (no input will use all GPUs, multiple GPUs are separated by commas ",", such as "0,1,2"): ' NEW_GPU
     fi
 
     echo
 
     if [[ "${GPU}" != "${NEW_GPU}" ]]; then
         sed -i 's/^#\s*gpu=/gpu=/g' ${DAMOMINER_CONF_FILE} && sleep 1 && read_config
-        sed -i 's/^gpu='${GPU}'/gpu='${NEW_GPU}'/g' ${DAMOMINER_CONF_FILE}
+        sed -i 's/^gpu='"${GPU}"'/gpu='"${NEW_GPU}"'/g' ${DAMOMINER_CONF_FILE}
 
-        if ! grep -wq "gpu=${NEW_GPU}" ${DAMOMINER_CONF_FILE}; then 
+        if ! grep -wq "gpu=${NEW_GPU}" ${DAMOMINER_CONF_FILE}; then
             echo -e "gpu=${NEW_GPU}" >>${DAMOMINER_CONF_FILE}
         fi
         if [[ $? -eq 0 ]]; then
@@ -1180,10 +1166,9 @@ configure_gpu() {
             else
                 echo -e "${INFO} Damominer running GPUs modified successfully! The new GPUs is: ${Green}${NEW_GPU}${Font}"
             fi
-            
-            check_running
+
             # if [[ ${CONFIGURE_ONLY} != "1" ]]; then
-            if [[ $? -eq 0 ]]; then
+            if check_running; then
                 restart_damominer
             fi
         else
@@ -1209,7 +1194,7 @@ configure_packages() {
         echo -e "${INFO} 更新软件源成功!"
 
         echo -e "{Info} 升级软件包到最新版本? [Y/n]:"
-        read -p "(默认: y):" UPGRADE
+        read -rp "(默认: y):" UPGRADE
         UPGRADE="${UPGRADE:=Y}"
         if [[ $UPGRADE = "Y" ]] || [[ $UPGRADE = "y" ]]; then
             apt-get upgrade -y
@@ -1221,7 +1206,7 @@ configure_packages() {
         echo -e "${INFO} Updates the package sources list successfully!"
 
         echo -e "Upgrade {Info} package to latest version? [Y/n]:"
-        read -p "(default: y):" UPGRADE
+        read -rp "(default: y):" UPGRADE
         UPGRADE="${UPGRADE:=Y}"
         if [[ $UPGRADE = "Y" ]] || [[ $UPGRADE = "y" ]]; then
             apt-get upgrade -y
@@ -1241,13 +1226,13 @@ blacklist_nouveau() {
     if [ ! -f "/etc/modprobe.d/blacklist-nouveau.conf" ]; then
         touch "/etc/modprobe.d/blacklist-nouveau.conf"
     fi
-    
-    if [[ ! $(grep "^blacklist nouveau$" /etc/modprobe.d/blacklist-nouveau.conf) ]]; then
-        echo "blacklist nouveau" > /etc/modprobe.d/blacklist-nvidia-nouveau.conf 
+
+    if ! grep -q '^blacklist nouveau$' /etc/modprobe.d/blacklist-nouveau.conf; then
+        echo "blacklist nouveau" >/etc/modprobe.d/blacklist-nvidia-nouveau.conf
     fi
 
-    if [[ ! $(grep "^options nouveau modeset=0$" /etc/modprobe.d/blacklist-nouveau.conf) ]]; then
-        echo "options nouveau modeset=0" >> /etc/modprobe.d/blacklist-nvidia-nouveau.conf
+    if ! grep -q "^options nouveau modeset=0$" /etc/modprobe.d/blacklist-nouveau.conf; then
+        echo "options nouveau modeset=0" >>/etc/modprobe.d/blacklist-nvidia-nouveau.conf
     fi
 
     # Update the kernel to reflect changes:
@@ -1271,42 +1256,43 @@ install_nvidia() {
 
     if [ "$LANGUAGE" == "cn" ]; then
         echo -e "是否要卸载旧的显卡驱动（推荐卸载）? [Y/n]"
-        read -p "(默认: y):" PURGE
+        read -rp "(默认: y):" PURGE
     else
         echo -e "Do you want to uninstall the old graphics card driver (recommended)? [Y/n]"
-        read -p "(default: y):" PURGE
+        read -rp "(default: y):" PURGE
     fi
-    
+
     PURGE="${PURGE:=Y}"
 
     if [[ $PURGE = "Y" ]] || [[ $PURGE = "y" ]]; then
         purge_nvidia
     fi
 
-    nvidia_install_types=( 'APT' 'NVIDIA' )
+    nvidia_install_types=('APT' 'NVIDIA')
     if [ "$LANGUAGE" == "cn" ]; then
         PS3="选择显卡驱动的安装方式: "
     else
         PS3="Select the way to install the graphics card driver: "
     fi
-    
-    select nvidia_install_type in ${nvidia_install_types[@]}; do
+
+    select nvidia_install_type in "${nvidia_install_types[@]}"; do
         case ${nvidia_install_type} in
         'APT')
             perform_nvidia_apt_install
-            break;
-        ;;
+            break
+            ;;
         'NVIDIA')
             perform_nvidia_website_install
-            break;
-        ;;
+            break
+            ;;
         *)
             if [ "$LANGUAGE" == "cn" ]; then
                 echo -e "${ERROR} 输入无效."
             else
                 echo -e "Invalid ${ERROR} input."
             fi
-    esac
+            ;;
+        esac
     done
     if [ "$LANGUAGE" == "cn" ]; then
         echo -e "${INFO} 安装显卡驱动完成! 如有报错请重启后再重新安装"
@@ -1321,12 +1307,12 @@ perform_nvidia_apt_install() {
 
     if [ "$LANGUAGE" == "cn" ]; then
         echo -e "是否要自动安装推荐驱动? [Y/n]"
-        read -p "(默认: y):" AUTO
+        read -rp "(默认: y):" AUTO
     else
         echo -e "Do you want to automatically install the recommended driver? [Y/n]"
-        read -p "(default: y):" AUTO
+        read -rp "(default: y):" AUTO
     fi
-    
+
     AUTO="${AUTO:=Y}"
 
     if [[ $AUTO = "Y" ]] || [[ $AUTO = "y" ]]; then
@@ -1334,15 +1320,15 @@ perform_nvidia_apt_install() {
     elif [[ $AUTO = "N" ]] || [[ $AUTO = "n" ]]; then
         if [ "$LANGUAGE" == "cn" ]; then
             echo -e "请输入要安装的版本号, 新系列显卡使用 515, 525, 老系列显卡使用 470: "
-            read -p "(默认: 525):" NVIDIA_APT_VERSION
+            read -rp "(默认: 525):" NVIDIA_APT_VERSION
         else
             echo -e "Please enter the version number to be installed"
             echo -e "Use 515, 525 for new series graphics cards, and 470 for old series: "
-            read -p "(default: 525):" NVIDIA_APT_VERSION
+            read -rp "(default: 525):" NVIDIA_APT_VERSION
         fi
-        
+
         NVIDIA_APT_VERSION="${NVIDIA_APT_VERSION:=525}"
-        apt install nvidia-driver-$NVIDIA_APT_VERSION -y
+        apt install nvidia-driver-"$NVIDIA_APT_VERSION" -y
 
         blacklist_nouveau
     else
@@ -1353,7 +1339,7 @@ perform_nvidia_apt_install() {
             echo -e "${ERROR} Input is invalid, please enter Y or N."
             echo -e "${ERROR} Interrupted installing graphics driver."
         fi
-        
+
         exit
     fi
 }
@@ -1361,10 +1347,10 @@ perform_nvidia_apt_install() {
 perform_nvidia_website_install() {
     if [ "$LANGUAGE" == "cn" ]; then
         echo -e "是否要自动安装最新驱动？[Y/n]"
-        read -p "(默认: y):" AUTO
+        read -rp "(默认: y):" AUTO
     else
         echo -e "Do you want to automatically install the latest driver? [Y/n]"
-        read -p "(default: y):" AUTO
+        read -rp "(default: y):" AUTO
     fi
     AUTO="${AUTO:=Y}"
 
@@ -1373,13 +1359,13 @@ perform_nvidia_website_install() {
     elif [[ $AUTO = "N" ]] || [[ $AUTO = "n" ]]; then
         if [ "$LANGUAGE" == "cn" ]; then
             echo -e "请输入要安装的版本号, 新系列显卡使用 515.65.01, 525.60.11, 老系列显卡使用 470.141.03: "
-            read -p "(默认: 525.60.11):" NVIDIA_INSTALL_VERSION
+            read -rp "(默认: 525.60.11):" NVIDIA_INSTALL_VERSION
         else
             echo -e "Please enter the version number to be installed"
             echo -e "The new series of graphics cards use 515.65.01, 525.60.11, and the old series use 470.141.03: "
-            read -p "(Default: 525.60.11):" NVIDIA_INSTALL_VERSION
+            read -rp "(Default: 525.60.11):" NVIDIA_INSTALL_VERSION
         fi
-        
+
         NVIDIA_INSTALL_VERSION="${NVIDIA_INSTALL_VERSION:=525.60.11}"
     else
         if [ "$LANGUAGE" == "cn" ]; then
@@ -1389,22 +1375,22 @@ perform_nvidia_website_install() {
             echo -e "${ERROR} Input is invalid, please enter Y or N."
             echo -e "${ERROR} Interrupted installing graphics driver."
         fi
-        
+
         exit
     fi
 
     blacklist_nouveau
 
     rm -f "NVIDIA-Linux-x86_64-$NVIDIA_INSTALL_VERSION.run"
-    wget $NVIDIA_DOWNLOAD_BASE_URL/$NVIDIA_INSTALL_VERSION/NVIDIA-Linux-x86_64-$NVIDIA_INSTALL_VERSION.run
-    chmod +x NVIDIA-Linux-x86_64-$NVIDIA_INSTALL_VERSION.run
+    wget $NVIDIA_DOWNLOAD_BASE_URL/"$NVIDIA_INSTALL_VERSION"/NVIDIA-Linux-x86_64-"$NVIDIA_INSTALL_VERSION".run
+    chmod +x NVIDIA-Linux-x86_64-"$NVIDIA_INSTALL_VERSION".run
 
     # 执行参数说明
     # -q Quiet
     # -a Accept License
     # -n Suppress Questions
     # -s Disable ncurses interface
-    ./NVIDIA-Linux-x86_64-$NVIDIA_INSTALL_VERSION.run -a -n -s
+    ./NVIDIA-Linux-x86_64-"$NVIDIA_INSTALL_VERSION".run -a -n -s
 
     # 清理下载的文件
     rm -f "NVIDIA-Linux-x86_64-$NVIDIA_INSTALL_VERSION.run"
@@ -1416,10 +1402,13 @@ purge_nvidia() {
     else
         echo -e "${INFO} Starts uninstalling graphics driver..."
     fi
-    
+
     apt purge nvidia-* -y
     apt autoremove -y
-    for i in $(dpkg -l | grep nvidia | awk {'print $2'}); do echo $i; apt-get --purge remove $i -y; done
+    for i in $(dpkg -l | awk 'BEGIN{IGNORECASE=1};/nvidia/{print $2}'); do
+        echo "$i"
+        apt-get --purge remove "$i" -y
+    done
 
     if [ "$LANGUAGE" == "cn" ]; then
         echo -e "${INFO} 卸载显卡驱动成功! 请在重启前一个安装显卡驱动"
@@ -1441,23 +1430,23 @@ add_dns() {
         else
             echo -e "${INFO} Backup DNS file to (${Blue}/etc/resolv.conf.backup${Font})"
         fi
-        
+
         cp -f /etc/resolv.conf /etc/resolv.conf.backup
     fi
-    if [[ ! $(grep "^# added by damominer$" /etc/resolv.conf) ]]; then
-        echo '# added by damominer' >> /etc/resolv.conf
+    if ! grep -q "^# added by damominer$" /etc/resolv.conf; then
+        echo '# added by damominer' >>/etc/resolv.conf
     fi
-    if [[ ! $(grep "^nameserver 8.8.8.8$" /etc/resolv.conf) ]]; then
-        echo nameserver 8.8.8.8 >> /etc/resolv.conf
+    if ! grep -q "^nameserver 8.8.8.8$" /etc/resolv.conf; then
+        echo nameserver 8.8.8.8 >>/etc/resolv.conf
     fi
-    if [[ ! $(grep "^nameserver 223.5.5.5$" /etc/resolv.conf) ]]; then
-        echo nameserver 223.5.5.5 >> /etc/resolv.conf
+    if ! grep -q "^nameserver 223.5.5.5$" /etc/resolv.conf; then
+        echo nameserver 223.5.5.5 >>/etc/resolv.conf
     fi
-    if [[ ! $(grep "^nameserver 119.29.29.29$" /etc/resolv.conf) ]]; then
-        echo nameserver 119.29.29.29 >> /etc/resolv.conf
+    if ! grep -q "^nameserver 119.29.29.29$" /etc/resolv.conf; then
+        echo nameserver 119.29.29.29 >>/etc/resolv.conf
     fi
-    if [[ ! $(grep "^nameserver 1.1.1.1$" /etc/resolv.conf) ]]; then
-        echo nameserver 1.1.1.1 >> /etc/resolv.conf
+    if ! grep -q "^nameserver 1.1.1.1$" /etc/resolv.conf; then
+        echo nameserver 1.1.1.1 >>/etc/resolv.conf
     fi
 
     if [ "$LANGUAGE" == "cn" ]; then
@@ -1488,7 +1477,7 @@ restore_dns() {
 repair_openssl() {
     OPENSSL_VERSION=$(openssl version)
 
-    if [[ $OPENSSL_VERSION =~ "1.1.1" ]]; then
+    if [[ $OPENSSL_VERSION =~ 1.1.1 ]]; then
         if [ "$LANGUAGE" == "cn" ]; then
             echo -e "${INFO} OpenSSL 版本正常! "
         else
@@ -1500,7 +1489,7 @@ repair_openssl() {
         else
             echo -e "${INFO} Starting to install OpenSSL 1.1.1..."
         fi
-        
+
         # 从 Impish builds 下载 openssl 二进制包
 
         wget -N -t2 -T3 "http://security.ubuntu.com/ubuntu/pool/main/o/openssl/openssl_1.1.1f-1ubuntu2.16_amd64.deb" -O openssl_1.1.1f-1ubuntu2.16_amd64.deb ||
@@ -1538,13 +1527,12 @@ view_damominer_log() {
         exit 1
     fi
 
-    
     if [ "$LANGUAGE" == "cn" ]; then
-        echo && echo -e "${TIP} 按 ${RED}Ctrl+C${Font} 终止查看日志" && echo -e "如果需要查看完整日志内容, 请用 ${RED}cat ${damominer_log}${Font} 命令。" && echo
+        echo && echo -e "${TIP} 按 ${RED}Ctrl+C${Font} 终止查看日志" && echo -e "如果需要查看完整日志内容, 请用 ${RED}cat ${DAMOMINER_LOG_FILE}${Font} 命令。" && echo
     else
-        echo && echo -e "${TIP} Press ${RED}Ctrl+C${Font} to stop viewing the log" && echo -e "If you need to view the complete log content, please use ${RED}cat ${damominer_log}${Font} command." && echo
+        echo && echo -e "${TIP} Press ${RED}Ctrl+C${Font} to stop viewing the log" && echo -e "If you need to view the complete log content, please use ${RED}cat ${DAMOMINER_LOG_FILE}${Font} command." && echo
     fi
-    
+
     tail -f ${DAMOMINER_LOG_FILE}
 }
 
@@ -1558,7 +1546,7 @@ clean_damominer_log() {
         exit 1
     fi
 
-    echo > ${DAMOMINER_LOG_FILE}
+    echo >${DAMOMINER_LOG_FILE}
 
     if [ "$LANGUAGE" == "cn" ]; then
         echo -e "${INFO} Damominer 日志已清空! "
@@ -1567,7 +1555,7 @@ clean_damominer_log() {
     fi
 }
 
-start_menu(){
+start_menu() {
     [[ -f ${DAMOMINER_CONF_FILE} ]] && read_config && check_pid
     [[ -f ${DAMOMINER_FILE} ]] && check_version
 
@@ -1583,7 +1571,7 @@ start_menu(){
         echo
         red " ———————————————— 安装向导 ———————————————— "
         yellow " 1. 升级 管理脚本"
-        if [[ ! -z ${DAMOMINER_VERSION} ]];then
+        if [[ -n ${DAMOMINER_VERSION} ]]; then
             yellow " 2. 安装 Damominer (已安装: v${DAMOMINER_VERSION})"
         else
             yellow " 2. 安装 Damominer"
@@ -1591,7 +1579,7 @@ start_menu(){
         yellow " 3. 更新 Damominer"
         yellow " 4. 卸载 Damominer"
         red " ———————————————— 程序执行 ———————————————— "
-        if [[ ! -z ${PID} ]]; then
+        if [[ -n ${PID} ]]; then
             yellow " 5. 启动 Damominer (运行中)"
         else
             yellow " 5. 启动 Damominer"
@@ -1599,7 +1587,7 @@ start_menu(){
         yellow " 6. 停止 Damominer"
         yellow " 7. 重启 Damominer"
         red " ———————————————— 配置设定 ———————————————— "
-        
+
         yellow " 8. 查看 Damominer 配置"
         if [[ -z ${ADDRESS} ]]; then
             yellow " 9. 修改 Damominer 钱包地址"
@@ -1629,23 +1617,23 @@ start_menu(){
         if [ ! -e /proc/driver/nvidia/version ]; then
             yellow " 15. 安装 NVIDIA 驱动 (未安装)"
         else
-            NVIDIA_VERSION=$(cat /proc/driver/nvidia/version | head -n 1 | awk '{ print $8 }')
+            NVIDIA_VERSION=$(awk 'NR==1{ print $8 }' /proc/driver/nvidia/version)
             yellow " 15. 安装 NVIDIA 驱动 (v${NVIDIA_VERSION})"
         fi
-        
+
         yellow " 16. 卸载 NVIDIA 驱动"
         if ! [ -x "$(command -v openssl)" ]; then
             yellow " 17. 修复 OpenSSL 版本 (未安装)"
         else
-            OPENSSL_VERSION=$(openssl version | head -n 1 | awk '{ print $2 }')
+            OPENSSL_VERSION=$(openssl version | awk 'NR==1{ print $2 }')
 
-            if [[ $OPENSSL_VERSION =~ "1.1.1" ]]; then
+            if [[ $OPENSSL_VERSION =~ 1.1.1 ]]; then
                 yellow " 17. 修复 OpenSSL 版本 (v${OPENSSL_VERSION})"
             else
                 yellow " 17. 修复 OpenSSL 版本 (v${OPENSSL_VERSION}, 需修复)"
             fi
         fi
-        if [[ ! $(grep "^# added by damominer$" /etc/resolv.conf) ]]; then
+        if ! grep -q "^# added by damominer$" /etc/resolv.conf; then
             yellow " 18. 添加 DNS (未添加)"
         else
             yellow " 18. 添加 DNS (已添加)"
@@ -1655,7 +1643,7 @@ start_menu(){
         yellow " 0. 退出 管理脚本"
         red " —————————————————————————————————————————"
         echo
-        read -p "请输入数字:" num
+        read -rp "请输入数字:" num
     else
         green " ============================================ "
         green " Damominer One-click Script v${SHELL_VERSION} "
@@ -1666,7 +1654,7 @@ start_menu(){
         echo
         red " ————————————————— Installation ————————————————— "
         yellow " 1. Upgrade Script"
-        if [[ ! -z ${DAMOMINER_VERSION} ]];then
+        if [[ -n ${DAMOMINER_VERSION} ]]; then
             yellow " 2. Install Damominer (Installed: v${DAMOMINER_VERSION})"
         else
             yellow " 2. Install Damominer"
@@ -1674,7 +1662,7 @@ start_menu(){
         yellow " 3. Upgrade Damominer"
         yellow " 4. Uninstall Damominer"
         red " —————————————————— Execution —————————————————— "
-        if [[ ! -z ${PID} ]]; then
+        if [[ -n ${PID} ]]; then
             yellow " 5. Start Damominer (Running)"
         else
             yellow " 5. Start Damominer"
@@ -1682,7 +1670,7 @@ start_menu(){
         yellow " 6. Stop Damominer"
         yellow " 7. Restart Damominer"
         red " ———————————————— Configuration ———————————————— "
-        
+
         yellow " 8. View Damominer Configuration"
         if [[ -z ${ADDRESS} ]]; then
             yellow " 9. Modify Damominer Address"
@@ -1712,23 +1700,23 @@ start_menu(){
         if [ ! -e /proc/driver/nvidia/version ]; then
             yellow " 15. Install NVIDIA Drivers (Not Installed)"
         else
-            NVIDIA_VERSION=$(cat /proc/driver/nvidia/version | head -n 1 | awk '{ print $8 }')
+            NVIDIA_VERSION=$(awk 'NR==1{ print $8 }' /proc/driver/nvidia/version)
             yellow " 15. Install NVIDIA Drivers (v${NVIDIA_VERSION})"
         fi
-        
+
         yellow " 16. Uninstall NVIDIA Driver"
         if ! [ -x "$(command -v openssl)" ]; then
             yellow " 17. Fix OpenSSL Version (Not Installed)"
         else
             OPENSSL_VERSION=$(openssl version | head -n 1 | awk '{ print $2 }')
 
-            if [[ $OPENSSL_VERSION =~ "1.1.1" ]]; then
+            if [[ $OPENSSL_VERSION =~ 1.1.1 ]]; then
                 yellow " 17. Fix OpenSSL Version (v${OPENSSL_VERSION})"
             else
                 yellow " 17. Fix OpenSSL Version (v${OPENSSL_VERSION}, Need to fix)"
             fi
         fi
-        if [[ ! $(grep "^# added by damominer$" /etc/resolv.conf) ]]; then
+        if ! grep -q "^# added by damominer$" /etc/resolv.conf; then
             yellow " 18. Add DNS (Not Added)"
         else
             yellow " 18. Add DNS (Added)"
@@ -1738,83 +1726,83 @@ start_menu(){
         yellow " 0. Exit Script"
         red " —————————————————————————————————————————"
         echo
-        read -p "Please enter a number:" num
+        read -rp "Please enter a number:" num
     fi
-    
+
     case "$num" in
     1)
-    update_shell
-    ;;
+        update_shell
+        ;;
     2)
-    install_damominer
-    ;;
+        install_damominer
+        ;;
     3)
-    update_damominer
-    ;;
+        update_damominer
+        ;;
     4)
-    uninstall_damominer
-    ;;
+        uninstall_damominer
+        ;;
     5)
-    start_damominer
-    ;;
+        start_damominer
+        ;;
     6)
-    stop_damominer
-    ;;
+        stop_damominer
+        ;;
     7)
-    restart_damominer
-    ;;
+        restart_damominer
+        ;;
     8)
-    view_config
-    ;;
+        view_config
+        ;;
     9)
-    configure_address
-    ;;
+        configure_address
+        ;;
     10)
-    configure_proxy
-    ;;
+        configure_proxy
+        ;;
     11)
-    configure_worker
-    ;;
+        configure_worker
+        ;;
     12)
-    configure_gpu
-    ;;
+        configure_gpu
+        ;;
     13)
-    view_damominer_log
-    ;;
+        view_damominer_log
+        ;;
     14)
-    clean_damominer_log
-    ;;
+        clean_damominer_log
+        ;;
     15)
-    install_nvidia
-    ;;
+        install_nvidia
+        ;;
     16)
-    purge_nvidia
-    ;;
+        purge_nvidia
+        ;;
     17)
-    repair_openssl
-    ;;
+        repair_openssl
+        ;;
     18)
-    add_dns
-    ;;
+        add_dns
+        ;;
     19)
-    restore_dns
-    ;;
+        restore_dns
+        ;;
     20)
-    new_account
-    ;;
+        new_account
+        ;;
     0)
-    exit 1
-    ;;
+        exit 1
+        ;;
     *)
-    clear
-    if [ "$LANGUAGE" == "cn" ]; then
-        red "请输入正确数字 (0-20)"
-    else
-        red "Please enter the correct number (0-20)"
-    fi
-    sleep 1s
-    start_menu
-    ;;
+        clear
+        if [ "$LANGUAGE" == "cn" ]; then
+            red "请输入正确数字 (0-20)"
+        else
+            red "Please enter the correct number (0-20)"
+        fi
+        sleep 1s
+        start_menu
+        ;;
     esac
 }
 check_ubuntu
