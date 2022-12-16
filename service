@@ -14,7 +14,7 @@
 PATH=/bin:/usr/bin:/sbin:/usr/sbin
 NAME=damominer
 SCRIPTNAME=/etc/init.d/"$NAME"
-DAMOMINER_DIR="${HOME}/.damominer"
+DAMOMINER_DIR="/.damominer"
 DAMOMINER_CONF_FILE="${DAMOMINER_DIR}/damominer.conf"
 DAMOMINER_LOG_FILE="${DAMOMINER_DIR}/aleo.log"
 DAMOMINER_FILE="${DAMOMINER_DIR}/damominer"

@@ -73,17 +73,17 @@ update_shell() {
     if [ "$LANGUAGE" == "cn" ]; then
         SHELL_NEW_VERSION=$(
             {
-                wget -t2 -qO- "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" ||
-                wget -t2 -qO- "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" ||
-                wget -t2 -qO- "https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh"
+                wget --timeout=5 -t2 -qO- "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" ||
+                wget --timeout=5 -t2 -qO- "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" ||
+                wget --timeout=5 -t2 -qO- "https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh"
             } | grep 'SHELL_VERSION="' | awk -F "=" '{print $NF}' | sed 's/\"//g' | head -1
         )
     else
         SHELL_NEW_VERSION=$(
             {
-                wget -t2 -qO- "https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" ||
-                wget -t2 -qO- "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" ||
-                wget -t2 -qO- "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh"
+                wget --timeout=5 -t2 -qO- "https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" ||
+                wget --timeout=5 -t2 -qO- "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" ||
+                wget --timeout=5 -t2 -qO- "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh"
             } | grep 'SHELL_VERSION="' | awk -F "=" '{print $NF}' | sed 's/\"//g' | head -1
         )
     fi
@@ -112,13 +112,13 @@ update_shell() {
             fi
 
             if [ "$LANGUAGE" == "cn" ]; then
-                wget -N -t2 "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh ||
-                wget -N -t2 "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh ||
-                wget -N -t2 "https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh
+                wget --timeout=5 -N -t2 "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh ||
+                wget --timeout=5 -N -t2 "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh ||
+                wget --timeout=5 -N -t2 "https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh
             else
-                wget -N -t2 "https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh ||
-                wget -N -t2 "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh ||
-                wget -N -t2 "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh
+                wget --timeout=5 -N -t2 "https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh ||
+                wget --timeout=5 -N -t2 "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh ||
+                wget --timeout=5 -N -t2 "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh
             fi
 
             chmod +x damominer.sh
@@ -204,24 +204,24 @@ check_new_version() {
         if [ "$LANGUAGE" == "cn" ]; then
             echo -e "${INFO} 开始检测 Damominer 最新版本..."
         else
-            echo -e "${INFO} started checking the latest version of Damominer..."
+            echo -e "${INFO} Start checking the latest version of Damominer..."
         fi
     fi
     
     if [ "$LANGUAGE" == "cn" ]; then
         DAMOMINER_NEW_VERSION=$(
             {
-                wget -t2 -qO- "https://proxy.jeongen.com/https://api.github.com/repos/damomine/aleominer/releases/latest" ||
-                wget -t2 -qO- "https://gh-api.p3terx.com/repos/damomine/aleominer/releases/latest" ||
-                wget -t2 -qO- "https://api.github.com/repos/damomine/aleominer/releases/latest"
+                wget --timeout=5 -t2 -qO- "https://proxy.jeongen.com/https://api.github.com/repos/damomine/aleominer/releases/latest" ||
+                wget --timeout=5 -t2 -qO- "https://gh-api.p3terx.com/repos/damomine/aleominer/releases/latest" ||
+                wget --timeout=5 -t2 -qO- "https://api.github.com/repos/damomine/aleominer/releases/latest"
             } | grep -o '"tag_name": ".*"' | head -n 1 | cut -d'"' -f4
         )
     else
         DAMOMINER_NEW_VERSION=$(
             {
-                wget -t2 -qO- "https://api.github.com/repos/damomine/aleominer/releases/latest" ||
-                wget -t2 -qO- "https://proxy.jeongen.com/https://api.github.com/repos/damomine/aleominer/releases/latest" ||
-                wget -t2 -qO- "https://gh-api.p3terx.com/repos/damomine/aleominer/releases/latest"
+                wget --timeout=5 -t2 -qO- "https://api.github.com/repos/damomine/aleominer/releases/latest" ||
+                wget --timeout=5 -t2 -qO- "https://proxy.jeongen.com/https://api.github.com/repos/damomine/aleominer/releases/latest" ||
+                wget --timeout=5 -t2 -qO- "https://gh-api.p3terx.com/repos/damomine/aleominer/releases/latest"
             } | grep -o '"tag_name": ".*"' | head -n 1 | cut -d'"' -f4
         )
     fi
@@ -261,13 +261,13 @@ download_damominer() {
     DOWNLOAD_URL="https://github.com/damomine/aleominer/releases/download/${DAMOMINER_NEW_VERSION}/damominer_linux_${DAMOMINER_NEW_VERSION}.tar"
     
     if [ "$LANGUAGE" == "cn" ]; then
-        wget -N "https://proxy.jeongen.com/${DOWNLOAD_URL}" -O damominer_linux_${DAMOMINER_NEW_VERSION}.tar ||
-        wget -N "https://ghproxy.com/${DOWNLOAD_URL}" -O damominer_linux_${DAMOMINER_NEW_VERSION}.tar ||
-        wget -N "${DOWNLOAD_URL}" -O damominer_linux_${DAMOMINER_NEW_VERSION}.tar
+        wget --timeout=15 -N "https://proxy.jeongen.com/${DOWNLOAD_URL}" -O damominer_linux_${DAMOMINER_NEW_VERSION}.tar ||
+        wget --timeout=15 -N "https://ghproxy.com/${DOWNLOAD_URL}" -O damominer_linux_${DAMOMINER_NEW_VERSION}.tar ||
+        wget --timeout=15 -N "${DOWNLOAD_URL}" -O damominer_linux_${DAMOMINER_NEW_VERSION}.tar
     else
-        wget -N "${DOWNLOAD_URL}" -O damominer_linux_${DAMOMINER_NEW_VERSION}.tar ||
-        wget -N "https://ghproxy.com/${DOWNLOAD_URL}" -O damominer_linux_${DAMOMINER_NEW_VERSION}.tar ||
-        wget -N "https://proxy.jeongen.com/${DOWNLOAD_URL}" -O damominer_linux_${DAMOMINER_NEW_VERSION}.tar
+        wget --timeout=15 -N "${DOWNLOAD_URL}" -O damominer_linux_${DAMOMINER_NEW_VERSION}.tar ||
+        wget --timeout=15 -N "https://ghproxy.com/${DOWNLOAD_URL}" -O damominer_linux_${DAMOMINER_NEW_VERSION}.tar ||
+        wget --timeout=15 -N "https://proxy.jeongen.com/${DOWNLOAD_URL}" -O damominer_linux_${DAMOMINER_NEW_VERSION}.tar
     fi
     
     [[ ! -s "damominer_linux_${DAMOMINER_NEW_VERSION}.tar" ]] && {
@@ -522,13 +522,13 @@ install_service() {
     fi
 
     if [ "$LANGUAGE" == "cn" ]; then
-        wget -N -t2 "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/service" -O /etc/init.d/damominer ||
-        wget -N -t2 "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/service" -O /etc/init.d/damominer ||
-        wget -N -t2 "https://raw.githubusercontent.com/damomine/aleominer/master/service" -O /etc/init.d/damominer
+        wget --timeout=5 -N -t2 "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/service" -O /etc/init.d/damominer ||
+        wget --timeout=5 -N -t2 "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/service" -O /etc/init.d/damominer ||
+        wget --timeout=5 -N -t2 "https://raw.githubusercontent.com/damomine/aleominer/master/service" -O /etc/init.d/damominer
     else
-        wget -N -t2 "https://raw.githubusercontent.com/damomine/aleominer/master/service" -O /etc/init.d/damominer ||
-        wget -N -t2 "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/service" -O /etc/init.d/damominer ||
-        wget -N -t2 "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/service" -O /etc/init.d/damominer
+        wget --timeout=5 -N -t2 "https://raw.githubusercontent.com/damomine/aleominer/master/service" -O /etc/init.d/damominer ||
+        wget --timeout=5 -N -t2 "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/service" -O /etc/init.d/damominer ||
+        wget --timeout=5 -N -t2 "https://proxy.jeongen.com/https://raw.githubusercontent.com/damomine/aleominer/master/service" -O /etc/init.d/damominer
     fi
     
     [[ ! -s /etc/init.d/damominer ]] && {
@@ -1371,7 +1371,7 @@ perform_nvidia_website_install() {
     AUTO="${AUTO:=Y}"
 
     if [[ $AUTO = "Y" ]] || [[ $AUTO = "y" ]]; then
-        NVIDIA_INSTALL_VERSION=$(wget -q -O - https://download.nvidia.com/XFree86/Linux-x86_64/latest.txt | cut -d" " -f 1)
+        NVIDIA_INSTALL_VERSION=$(wget --timeout=5 -q -O - https://download.nvidia.com/XFree86/Linux-x86_64/latest.txt | cut -d" " -f 1)
     elif [[ $AUTO = "N" ]] || [[ $AUTO = "n" ]]; then
         if [ "$LANGUAGE" == "cn" ]; then
             echo -e "请输入要安装的版本号, 新系列显卡使用 515.65.01, 525.60.11, 老系列显卡使用 470.141.03: "
