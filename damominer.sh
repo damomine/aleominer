@@ -105,9 +105,9 @@ update_shell() {
 
         [[ -z "${yn}" ]] && yn="y"
         if [[ ${yn} == [Yy] ]]; then
-            if [[ -e "/etc/init.d/damominer" ]]; then
-                uninstall_service
-            fi
+            # if [[ -e "/etc/init.d/damominer" ]]; then
+            #     uninstall_service
+            # fi
 
             if [ "$LANGUAGE" == "cn" ]; then
                 wget --timeout=5 -N -t2 "https://ghproxy.com/https://raw.githubusercontent.com/damomine/aleominer/master/damominer.sh" -O damominer.sh ||
