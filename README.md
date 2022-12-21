@@ -92,7 +92,12 @@ increase stalbel
 increase performance
 
 ### 2.1.2
-support 40-series cards
-enhance cuda performance
-decrease CPU load
-fix some issue (log crash, etc)  
+support 40-series cards<br>
+enhance cuda performance<br>
+decrease CPU load<br>
+fix some issue (log crash, etc)
+
+### 2.2.0
+enhance performance<br>
+add more log (driver verion, worker name, etc)<br>
+support for using local time as log message timestamps
