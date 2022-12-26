@@ -558,7 +558,7 @@ install_crontab() {
 
     cat <<EOF >> /etc/crontab
 # Damominer Start
-*/5 * * * * root bash /etc/init.d/damominer start > /dev/null 2>&1
+*/5 * * * * root bash /etc/init.d/damominer cronjob > /dev/null 2>&1
 # Damominer End
 EOF
 

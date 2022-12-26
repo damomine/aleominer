@@ -49,6 +49,7 @@ read_config() {
         PROXY=$(cat ${DAMOMINER_CONF_FILE} | grep "^proxy=" | awk -F "=" '{print $NF}')
         WORKER=$(cat ${DAMOMINER_CONF_FILE} | grep "^worker=" | awk -F "=" '{print $NF}')
         GPU=$(cat ${DAMOMINER_CONF_FILE} | grep "^gpu=" | awk -F "=" '{print $NF}')
+		START=$(cat ${DAMOMINER_CONF_FILE} | grep "^start=" | awk -F "=" '{print $NF}')
     fi
 }
 
@@ -84,8 +85,17 @@ do_start() {
 		fi
 		echo -e "${DAMOMINER_FILE} ${ARGUMENTS}"
 		bash -c "nohup ${DAMOMINER_FILE} ${ARGUMENTS}" >>"${DAMOMINER_LOG_FILE}" 2>&1 &
+		
+		sed -i 's/^#\s*start=/start=/g' ${DAMOMINER_CONF_FILE}
+        sed -i 's/^start=false/start=true/g' ${DAMOMINER_CONF_FILE}
+		
+		if ! grep -wq "start=true" ${DAMOMINER_CONF_FILE}; then
+            echo -e "start=true" >>${DAMOMINER_CONF_FILE}
+        fi
+
 		sleep 2s
 		check_running
+		
 		if [[ $? -eq 0 ]]; then
 			view_config
 			echo -e "${INFO} Damoiner started successfully!"
@@ -97,6 +107,14 @@ do_start() {
 
 do_stop() {
 	check_running
+
+	sed -i 's/^#\s*start=/start=/g' ${DAMOMINER_CONF_FILE}
+	sed -i 's/^start=true/start=false/g' ${DAMOMINER_CONF_FILE}
+	
+	if ! grep -wq "start=false" ${DAMOMINER_CONF_FILE}; then
+		echo -e "start=false" >>${DAMOMINER_CONF_FILE}
+	fi
+
 	if [[ $? -eq 0 ]]; then
 		kill -9 ${PID}
 		RETVAL=$?
@@ -108,6 +126,14 @@ do_stop() {
 	else
 		echo -e "${INFO} Damoiner is not running!"
 		RETVAL=1
+	fi
+}
+
+do_cronjob() {
+	read_config
+
+	if [ "$START" == "true" ]; then
+		do_start
 	fi
 }
 
@@ -145,6 +171,9 @@ restart)
 status)
     do_status
     ;;
+cronjob)
+	do_cronjob
+	;;
 log)
 	do_log
 	;;
