@@ -2,7 +2,8 @@
 
 # 变量
 LANGUAGE=$1
-SHELL_VERSION="0.9.14"
+SHELL_VERSION="0.9.15"
+CRONTAB_FILE="/usr/bin/crontab"
 DAMOMINER_DIR="/.damominer"
 DAMOMINER_CONF_FILE="${DAMOMINER_DIR}/damominer.conf"
 DAMOMINER_LOG_FILE="${DAMOMINER_DIR}/aleo.log"
@@ -172,6 +173,32 @@ check_damominer_conf_file() {
 check_installed_status() {
     check_damominer_file
     check_damominer_conf_file
+}
+
+check_crontab_installed_status() {
+    if [[ ! -e ${CRONTAB_FILE} ]]; then
+        if [ "$LANGUAGE" == "cn" ]; then
+            echo -e "${ERROR} Crontab 没有安装，开始安装..."
+        else
+            echo -e "${ERROR} Crontab is not installed, starting to install..."
+        fi
+        
+        apt install cron -y
+        if [[ ! -e ${CRONTAB_FILE} ]]; then
+            if [ "$LANGUAGE" == "cn" ]; then
+                echo -e "${ERROR} Crontab 安装失败，请检查!"
+            else
+                echo -e "${ERROR} Install Crontab failed, please check!"
+            fi
+            exit 1
+        else
+            if [ "$LANGUAGE" == "cn" ]; then
+                echo -e "${INFO} Crontab 安装成功!"
+            else
+                echo -e "${INFO} Crontab installed successfully!"
+            fi
+        fi
+    fi
 }
 
 check_pid() {
@@ -388,6 +415,8 @@ do_install_damominer() {
     download_damominer
     generate_config
     install_service
+    install_crontab
+    restart_crontab
     if [ "$LANGUAGE" == "cn" ]; then
         echo -e "${INFO} Damominer 安装成功!"
     else
@@ -450,6 +479,8 @@ do_uninstall_damominer() {
         fi
     }
     uninstall_service
+    uninstall_crontab
+    restart_crontab
     [[ -e ${DAMOMINER_LOG_FILE} ]] && rm -f ${DAMOMINER_LOG_FILE} && {
         if [ "$LANGUAGE" == "cn" ]; then
             echo -e "${INFO} 删除 Damoiner 日志文件成功!"
@@ -516,6 +547,58 @@ update_damominer() {
     fi
 }
 
+install_crontab() {
+    if [ "$LANGUAGE" == "cn" ]; then
+        echo -e "${INFO} 开始安装 Damominer 定时检测服务..."
+    else
+        echo -e "${INFO} Starts installing Damominer monitor service..."
+    fi
+    
+    check_crontab_installed_status
+
+    cat <<EOF >> /etc/crontab
+# Damominer Start
+*/5 * * * * root bash /etc/init.d/damominer start > /dev/null 2>&1
+# Damominer End
+EOF
+
+    if [ "$LANGUAGE" == "cn" ]; then
+        echo -e "${INFO} 安装 Damominer 定时检测服务成功!"
+    else
+        echo -e "${INFO} Install Damominer monitor service successfully!"
+    fi
+}
+
+restart_crontab() {
+    if [ "$LANGUAGE" == "cn" ]; then
+        echo -e "${INFO} 重启 Damominer 定时检测服务..."
+    else
+        echo -e "${INFO} Restart Damominer monitor service..."
+    fi
+    [[ -s /etc/init.d/cron ]] && /etc/init.d/cron restart
+    if [ "$LANGUAGE" == "cn" ]; then
+        echo -e "${INFO} 重启 Damominer 定时检测服务成功!"
+    else
+        echo -e "${INFO} Restart Damominer monitor service successfully!"
+    fi
+}
+
+uninstall_crontab() {
+    if [ "$LANGUAGE" == "cn" ]; then
+        echo -e "${INFO} 开始卸载 Damominer 定时检测服务..."
+    else
+        echo -e "${INFO} Starts uninstalling Damominer monitor service..."
+    fi
+
+    cat < /etc/crontab | sed '/^# Damominer Start/,/^# Damominer End/d' >tmpfile && mv tmpfile /etc/crontab
+
+    if [ "$LANGUAGE" == "cn" ]; then
+        echo -e "${INFO} 开始卸载 Damominer 定时检测服务成功!"
+    else
+        echo -e "${INFO} Uninstall Damominer monitor service successfully!"
+    fi
+}
+
 install_service() {
     if [ "$LANGUAGE" == "cn" ]; then
         echo -e "${INFO} 开始安装 Damominer 启动脚本..."
@@ -565,7 +648,7 @@ uninstall_service() {
     if [ "$LANGUAGE" == "cn" ]; then
         echo -e "${INFO} 卸载 Damominer 启动脚本成功!"
     else
-        echo -e "${INFO} Uninstalled Damominer startup script successfully!"
+        echo -e "${INFO} Uninstall Damominer startup script successfully!"
     fi
 }
 
