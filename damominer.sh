@@ -2,7 +2,7 @@
 
 # 变量
 LANGUAGE=$1
-SHELL_VERSION="0.9.15"
+SHELL_VERSION="0.9.16"
 CRONTAB_FILE="/usr/bin/crontab"
 DAMOMINER_DIR="/.damominer"
 DAMOMINER_CONF_FILE="${DAMOMINER_DIR}/damominer.conf"
