@@ -342,6 +342,14 @@ download_damominer() {
 
         rm -vf "${DAMOMINER_FILE}"
     done
+    if [ -d "${DAMOMINER_FILE}" ]; then
+        if [ "$LANGUAGE" == "cn" ]; then
+            echo -e "${INFO} 删除旧版 Damominer 目录..."
+        else
+            echo -e "${INFO} Remove old Damominer folder..."
+        fi
+        rm -vrf "${DAMOMINER_FILE}"
+    fi
     bash -c "mv -f damominer ${DAMOMINER_FILE}"
     [[ ! -f ${DAMOMINER_FILE} ]] && {
         if [ "$LANGUAGE" == "cn" ]; then
