@@ -67,6 +67,51 @@ Options:
 - NVIDIA Turing GPU
 - NVIDIA Ampere GPU
 
+## API Reference
+### miner status 
+**Path：** /status
+
+**Method：** GET
+
+**Response:**
+
+    {
+      "code": 200,
+      "data": {
+        "online": false
+      }
+    }
+    
+
+
+### gpu miner info 
+**Path：** /gpu
+
+**Method：** GET
+
+**Response:**
+
+    {
+	"code": 200,
+	"data": {
+		"gpus": [{
+			"cclk": 1635, //graphics clock
+			"ctmp": 74, // gpu temperature
+			"device": "2060SU", //gpu device 
+			"fan": 76, //fan
+			"gmclk": 6801, //graphics memory clock
+			"id": 0,
+			"inval": 0, //invalid
+			"mtmp": "89", //max temperature
+			"power": 169, //power
+			"proof": 0.0, //proof rate
+			"statle": 0, // statle
+			"valid": 0 // valid
+		}],
+		"uptime": 197 //program up time 
+	}
+    
+
 ## Changelog
 
 ### 1.1.0
