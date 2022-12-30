@@ -147,7 +147,7 @@ enhance performance<br>
 add more log (driver verion, worker name, etc)<br>
 support for using local time as log message timestamps
 
-### 2.2.3
+### 2.2.4
 The performance is improved by 10%+, and the CPU demand is further reduced<br>
 Support proxy line automatic switching function<br>
 Support miner api, easy to connect with cluster management and monitoring tools
