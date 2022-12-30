@@ -148,6 +148,6 @@ add more log (driver verion, worker name, etc)<br>
 support for using local time as log message timestamps
 
 ### 2.2.4
-The performance of the 30 series is increased by 10%+, and the performance of the 20 series is increased by 15%+, while the CPU demand is further reduced<br>
-Support proxy line automatic switching function<br>
-Support miner api, easy to connect with cluster management and monitoring tools
+Optimize 20 series GPU performance for more than 10%, 30 series GPU performance for 15%, decrease the CPU requirements<br>
+Shift from different proxies automatically<br>
+Support Miner API, facilitating cluster management and monitor tools
