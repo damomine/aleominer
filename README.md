@@ -110,10 +110,12 @@ Options:
 		}],
 		"uptime": 197 //program up time 
 	}
-    
+**Usage:**
+```shell
+./damominer --address <your address> --rest --port 5001 --proxy <solo prover proxy> [OPTIONS]    
+```
 
 ## Changelog
-
 ### 1.1.0
 support for aleo testnet3 phase2.   
 
