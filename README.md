@@ -153,3 +153,8 @@ support for using local time as log message timestamps
 Optimize 20 series GPU performance for more than 10%, 30 series GPU performance for 15%, decrease the CPU requirements<br>
 Shift from different proxies automatically<br>
 Support Miner API, facilitating cluster management and monitor tools
+
+### 2.3.0 and 2.3.1
+GPU performance: Optimize mid-to-high-end GPU performance for more than 20%, low-end GPU performance for more than 15%.<br>
+CPU requirement: the algorithm has been reconstructed, the CPU consumption has been largely reduced to the 30%-40% of the previous version.<br>
+Note that v2.3.1 has relatively higher consumption of vRam which can result in the overload of 10G vRam in some operating system. In that case, please choose v2.3.0 to lower vRam load.
