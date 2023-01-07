@@ -2,7 +2,7 @@
 
 # 变量
 LANGUAGE=$1
-SHELL_VERSION="0.9.16"
+SHELL_VERSION="0.9.17"
 CRONTAB_FILE="/usr/bin/crontab"
 DAMOMINER_DIR="/.damominer"
 DAMOMINER_CONF_FILE="${DAMOMINER_DIR}/damominer.conf"
@@ -264,6 +264,7 @@ check_new_version() {
             echo -e "${ERROR} Failed to obtain the latest version of Damominer, please manually obtain the latest version number[ https://github.com/damomine/aleominer/releases ]"
             read -rep "Please enter the version number:" DAMOMINER_NEW_VERSION
             [[ -z "${DAMOMINER_NEW_VERSION}" ]] && echo "${INFO} cancel..." && exit 1
+            DAMOMINER_NEW_VERSION="v${DAMOMINER_NEW_VERSION}"
         fi
     fi
     if [ "$LANGUAGE" == "cn" ]; then
@@ -274,7 +275,7 @@ check_new_version() {
 }
 
 download_damominer() {
-    if [ -z "${DAMOMINER_NEW_VERSION}" ]; then
+    if [ -z "${DAMOMINER_INSTALL_VERSION}" ]; then
         if [ "$LANGUAGE" == "cn" ]; then
             echo -e "${ERROR} Damominer 版本获取失败, 中断下载"
         else
@@ -282,24 +283,24 @@ download_damominer() {
         fi
     fi
     if [ "$LANGUAGE" == "cn" ]; then
-        echo -e "${INFO} 开始下载 Damominer 版本 ${DAMOMINER_NEW_VERSION}..."
+        echo -e "${INFO} 开始下载 Damominer 版本 ${DAMOMINER_INSTALL_VERSION}..."
     else
-        echo -e "${INFO} Starts downloading the Damominer version ${DAMOMINER_NEW_VERSION}..."
+        echo -e "${INFO} Starts downloading the Damominer version ${DAMOMINER_INSTALL_VERSION}..."
     fi
 
-    DOWNLOAD_URL="https://github.com/damomine/aleominer/releases/download/${DAMOMINER_NEW_VERSION}/damominer_linux_${DAMOMINER_NEW_VERSION}.tar"
+    DOWNLOAD_URL="https://github.com/damomine/aleominer/releases/download/${DAMOMINER_INSTALL_VERSION}/damominer_linux_${DAMOMINER_INSTALL_VERSION}.tar"
 
     if [ "$LANGUAGE" == "cn" ]; then
-        wget --timeout=15 -N "https://proxy.jeongen.com/${DOWNLOAD_URL}" -O damominer_linux_"${DAMOMINER_NEW_VERSION}".tar ||
-            wget --timeout=15 -N "https://ghproxy.com/${DOWNLOAD_URL}" -O damominer_linux_"${DAMOMINER_NEW_VERSION}".tar ||
-            wget --timeout=15 -N "${DOWNLOAD_URL}" -O damominer_linux_"${DAMOMINER_NEW_VERSION}".tar
+        wget --timeout=15 -N "https://proxy.jeongen.com/${DOWNLOAD_URL}" -O damominer_linux_"${DAMOMINER_INSTALL_VERSION}".tar ||
+            wget --timeout=15 -N "https://ghproxy.com/${DOWNLOAD_URL}" -O damominer_linux_"${DAMOMINER_INSTALL_VERSION}".tar ||
+            wget --timeout=15 -N "${DOWNLOAD_URL}" -O damominer_linux_"${DAMOMINER_INSTALL_VERSION}".tar
     else
-        wget --timeout=15 -N "${DOWNLOAD_URL}" -O damominer_linux_"${DAMOMINER_NEW_VERSION}".tar ||
-            wget --timeout=15 -N "https://ghproxy.com/${DOWNLOAD_URL}" -O damominer_linux_"${DAMOMINER_NEW_VERSION}".tar ||
-            wget --timeout=15 -N "https://proxy.jeongen.com/${DOWNLOAD_URL}" -O damominer_linux_"${DAMOMINER_NEW_VERSION}".tar
+        wget --timeout=15 -N "${DOWNLOAD_URL}" -O damominer_linux_"${DAMOMINER_INSTALL_VERSION}".tar ||
+            wget --timeout=15 -N "https://ghproxy.com/${DOWNLOAD_URL}" -O damominer_linux_"${DAMOMINER_INSTALL_VERSION}".tar ||
+            wget --timeout=15 -N "https://proxy.jeongen.com/${DOWNLOAD_URL}" -O damominer_linux_"${DAMOMINER_INSTALL_VERSION}".tar
     fi
 
-    [[ ! -s "damominer_linux_${DAMOMINER_NEW_VERSION}.tar" ]] && {
+    [[ ! -s "damominer_linux_${DAMOMINER_INSTALL_VERSION}.tar" ]] && {
         if [ "$LANGUAGE" == "cn" ]; then
             echo -e "${ERROR} Damominer 下载失败!"
         else
@@ -308,16 +309,16 @@ download_damominer() {
     } && exit 1
 
     if [ "$LANGUAGE" == "cn" ]; then
-        echo -e "${INFO} 下载 Damominer 版本 ${DAMOMINER_NEW_VERSION}成功!"
+        echo -e "${INFO} 下载 Damominer 版本 ${DAMOMINER_INSTALL_VERSION}成功!"
     else
-        echo -e "${INFO} Download Damominer version ${DAMOMINER_NEW_VERSION} successfully!"
+        echo -e "${INFO} Download Damominer version ${DAMOMINER_INSTALL_VERSION} successfully!"
     fi
 
-    tar -xvf damominer_linux_"${DAMOMINER_NEW_VERSION}".tar || (rm damominer_linux_"${DAMOMINER_NEW_VERSION}".tar && {
+    tar -xvf damominer_linux_"${DAMOMINER_INSTALL_VERSION}".tar || (rm damominer_linux_"${DAMOMINER_INSTALL_VERSION}".tar && {
         if [ "$LANGUAGE" == "cn" ]; then
-            echo -e "${ERROR} 解压 damominer_linux_${DAMOMINER_NEW_VERSION}.tar 失败!"
+            echo -e "${ERROR} 解压 damominer_linux_${DAMOMINER_INSTALL_VERSION}.tar 失败!"
         else
-            echo -e "${ERROR} Unpacking damominer_linux_${DAMOMINER_NEW_VERSION}.tar failed!"
+            echo -e "${ERROR} Unpacking damominer_linux_${DAMOMINER_INSTALL_VERSION}.tar failed!"
         fi
     } && exit 1)
 
@@ -402,6 +403,8 @@ install_damominer() {
         install_nvidia
     fi
 
+    check_new_version
+    DAMOMINER_INSTALL_VERSION=${DAMOMINER_NEW_VERSION}
     do_install_damominer
     if [ "$LANGUAGE" == "cn" ]; then
         echo -e "${INFO} 开始启动 Damominer..."
@@ -419,7 +422,6 @@ do_install_damominer() {
         echo -e "${INFO} Starts installing Damominer..."
     fi
 
-    check_new_version
     download_damominer
     generate_config
     install_service
@@ -511,23 +513,69 @@ update_damominer() {
     else
         echo -e "${INFO} Starts upgrading Damominer..."
     fi
-
+    
     check_installed_status
-    check_new_version
+    check_version
 
-    if [ "v${DAMOMINER_VERSION}" == "${DAMOMINER_NEW_VERSION}" ]; then
-        if [ "$LANGUAGE" == "cn" ]; then
-            echo -e "${INFO} Damominer 已经为最新版本!"
-        else
-            echo -e "${INFO} Damominer is the latest version!"
-        fi
+    if [ "$LANGUAGE" == "cn" ]; then
+        PS3="请选择要更新的 Damominer 版本:"
+        options=("最新版本" "手动输入")
+        select opt in "${options[@]}"; do
+            case $opt in
+            "最新版本")
+                check_new_version
+                DAMOMINER_UPDATE_VERSION=${DAMOMINER_NEW_VERSION}
+
+                if [ "v${DAMOMINER_VERSION}" == "${DAMOMINER_NEW_VERSION}" ]; then
+                    echo -e "${INFO} Damominer 已经为最新版本!"
+                fi
+                break
+                ;;
+            "手动输入")
+                read -rep " 请输入 Damominer 版本: " DAMOMINER_UPDATE_VERSION
+                echo
+
+                if [ "v${DAMOMINER_VERSION}" == "${DAMOMINER_UPDATE_VERSION}" ]; then
+                    echo -e "${INFO} Damominer 已经为版本 ${DAMOMINER_UPDATE_VERSION}!"
+                fi
+                break
+                ;;
+            *) echo "无效选项" ;;
+            esac
+        done
+    else
+        PS3="Please select the version of Damominer to update:"
+        options=("Latest version" "Manual input")
+        select opt in "${options[@]}"; do
+            case $opt in
+            "Latest version")
+                check_new_version
+                DAMOMINER_UPDATE_VERSION=${DAMOMINER_NEW_VERSION}
+
+                if [ "v${DAMOMINER_VERSION}" == "${DAMOMINER_NEW_VERSION}" ]; then
+                    echo -e "${INFO} Damominer is the latest version!"
+                fi
+                break
+                ;;
+            "Manual input")
+                read -rep " Please enter the Damominer version: " DAMOMINER_UPDATE_VERSION
+                echo
+
+                if [ "v${DAMOMINER_VERSION}" == "${DAMOMINER_UPDATE_VERSION}" ]; then
+                    echo -e "${INFO} Damominer is the version ${DAMOMINER_UPDATE_VERSION}!"
+                fi
+                break
+                ;;
+            *) echo "Invalid option" ;;
+            esac
+        done
     fi
 
     if [ "$LANGUAGE" == "cn" ]; then
-        echo -e "确定要更新 Damominer 版本 [v${DAMOMINER_VERSION}] 到远程版本 [${DAMOMINER_NEW_VERSION}]? [Y/n]:"
+        echo -e "确定要更新 Damominer 版本 [v${DAMOMINER_VERSION}] 到远程版本 [v${DAMOMINER_UPDATE_VERSION}]? [Y/n]:"
         read -rp "(默认: y):" UPDATE
     else
-        echo -e "Are you sure you want to update Damominer version [v${DAMOMINER_VERSION}] to remote version [${DAMOMINER_NEW_VERSION}]? [Y/n]:"
+        echo -e "Are you sure you want to update Damominer version [v${DAMOMINER_VERSION}] to remote version [v${DAMOMINER_UPDATE_VERSION}]? [Y/n]:"
         read -rp "(default: y):" UPDATE
     fi
 
@@ -535,6 +583,7 @@ update_damominer() {
     if [[ $UPDATE = "Y" ]] || [[ $UPDATE = "y" ]]; then
 
         do_uninstall_damominer
+        DAMOMINER_INSTALL_VERSION="v${DAMOMINER_UPDATE_VERSION}"
         do_install_damominer
 
         if [ "$LANGUAGE" == "cn" ]; then
