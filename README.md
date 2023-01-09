@@ -155,7 +155,7 @@ Shift from different proxies automatically<br>
 Support Miner API, facilitating cluster management and monitor tools
 
 ### 2.3.0 and 2.3.1
-GPU performance: Optimize mid-to-high-end GPU performance for more than 20%, low-end GPU performance for more than 15%.<br>
+GPU performance: Optimize mid-to-high-end GPU performance for more than 20%, low-end GPU performance for more than 15%.Improved 3080 GPU vRam overload problem. For 10G vRam, we highly recommend you to choose v2.3.2.<br>
 CPU requirement: the algorithm has been reconstructed, the CPU consumption has been largely reduced to the 30%-40% of the previous version.<br>
 Note that v2.3.1 has relatively higher consumption of vRam which can result in the overload of 10G vRam in some operating system. In that case, please choose v2.3.0 to lower vRam load.
 
