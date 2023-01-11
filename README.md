@@ -160,4 +160,8 @@ CPU requirement: the algorithm has been reconstructed, the CPU consumption has b
 Note that v2.3.1 has relatively higher consumption of vRam which can result in the overload of 10G vRam in some operating system. In that case, please choose v2.3.0 to lower vRam load.
 
 ### 2.3.2
-Improved 3080 GPU vRam overload problem. For 10G vRam, we highly recommend you to choose v2.3.2.
+Improved 3080 GPU vRam overload problem. For 10G vRam, we highly recommend you to choose v2.3.2
+
+### 2.3.4
+Decrease the CPU requirements, some ETH mining machine can run Damominer directly<br>
+Improve the 3060Ti, 3080 GPU performance and pcie 1x problems
