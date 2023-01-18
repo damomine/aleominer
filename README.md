@@ -170,3 +170,6 @@ Improve the 3060Ti, 3080 GPU performance and pcie 1x problems
 Improve GPU performance by 5% <br>
 Added the parameter --mode to support eth mining machines. Configure the parameter 0 to mine with only GPU(no requirement for cpu, and the computing power of some GPU cards will be slightly lower), Configure the parameter 1 to mine with cpu+gpu, and the default parameter is 1 <br>
 Added the parameter --pool to support joining Aleox mining pool.
+
+### 2.3.6
+Run with pool mode, the GPU performance is 5% higher
