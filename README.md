@@ -165,3 +165,8 @@ Improved 3080 GPU vRam overload problem. For 10G vRam, we highly recommend you t
 ### 2.3.4
 Decrease the CPU requirements, some ETH mining machine can run Damominer directly<br>
 Improve the 3060Ti, 3080 GPU performance and pcie 1x problems
+
+### 2.3.5
+Improve GPU performance by 5% <br>
+Added the parameter --mode to support eth mining machines. Configure the parameter 0 to mine with only GPU(no requirement for cpu, and the computing power of some GPU cards will be slightly lower), Configure the parameter 1 to mine with cpu+gpu, and the default parameter is 1 <br>
+Added the parameter --pool to support joining Aleox mining pool.
