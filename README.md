@@ -175,4 +175,5 @@ Added the parameter --pool to support joining Aleox mining pool.
 Run with pool mode, the GPU performance is 5% higher
 
 ### 2.3.7
-Run with pool mode, the GPU performance is 5% higher
+Fix problems in HiveOS<br>
+Improve RTX 20s GPU performance by 5% <br>
