@@ -2,7 +2,7 @@
 
 # 变量
 LANGUAGE=$1
-SHELL_VERSION="0.9.17"
+SHELL_VERSION="0.9.18"
 CRONTAB_FILE="/usr/bin/crontab"
 DAMOMINER_DIR="/.damominer"
 DAMOMINER_CONF_FILE="${DAMOMINER_DIR}/damominer.conf"
@@ -572,10 +572,10 @@ update_damominer() {
     fi
 
     if [ "$LANGUAGE" == "cn" ]; then
-        echo -e "确定要更新 Damominer 版本 [v${DAMOMINER_VERSION}] 到远程版本 [v${DAMOMINER_UPDATE_VERSION}]? [Y/n]:"
+        echo -e "确定要更新 Damominer 版本 [v${DAMOMINER_VERSION}] 到远程版本 [${DAMOMINER_UPDATE_VERSION}]? [Y/n]:"
         read -rp "(默认: y):" UPDATE
     else
-        echo -e "Are you sure you want to update Damominer version [v${DAMOMINER_VERSION}] to remote version [v${DAMOMINER_UPDATE_VERSION}]? [Y/n]:"
+        echo -e "Are you sure you want to update Damominer version [v${DAMOMINER_VERSION}] to remote version [${DAMOMINER_UPDATE_VERSION}]? [Y/n]:"
         read -rp "(default: y):" UPDATE
     fi
 
@@ -583,7 +583,7 @@ update_damominer() {
     if [[ $UPDATE = "Y" ]] || [[ $UPDATE = "y" ]]; then
 
         do_uninstall_damominer
-        DAMOMINER_INSTALL_VERSION="v${DAMOMINER_UPDATE_VERSION}"
+        DAMOMINER_INSTALL_VERSION="${DAMOMINER_UPDATE_VERSION}"
         do_install_damominer
 
         if [ "$LANGUAGE" == "cn" ]; then
