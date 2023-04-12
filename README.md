@@ -177,3 +177,6 @@ Run with pool mode, the GPU performance is 5% higher
 ### 2.3.7
 Fix problems in HiveOS<br>
 Improve RTX 20s GPU performance by 5% <br>
+
+### 2.3.8
+Support grouping, for example --group 123 means setting the group to 123
