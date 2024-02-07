@@ -183,3 +183,7 @@ Support grouping, for example --group 123 means setting the group to 123
 
 ### 2.3.9
 enhance performance
+
+### 2.4.0
+Remove pool mode
+Improve stability
